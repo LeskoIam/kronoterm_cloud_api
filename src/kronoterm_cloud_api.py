@@ -88,8 +88,19 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.SYSTEM_REVIEW.value).json()
         return data
 
+    @cached(cache=TTLCache(maxsize=512, ttl=30))
+    def get_circle_2(self) -> dict:
+        """Get circle 2 data.
+
+        :return: circle 2 data
+        """
+        data = self.get_raw(APIEndpoint.HEATING_LOOP_2.value).json()
+        log.debug(data)
+        return data
+
     def get_working_function(self) -> WorkingFunction:
         """Get currently set HP working function
+
         :return: WorkingFunction Enum
         """
         data = self.get_system_review()["TemperaturesAndConfig"]["working_function"]
@@ -124,8 +135,7 @@ class KronotermCloudApi:
 
         :return: currently set convector temperature in [C]
         """
-        url = "TopPage=1&Subpage=6"
-        set_temp = self.get_raw(url).json()["HeatingCircleData"]["circle_temp"]
+        set_temp = self.get_circle_2()["HeatingCircleData"]["circle_temp"]
         return float(set_temp)
 
     def get_working_status(self) -> bool:
@@ -133,8 +143,7 @@ class KronotermCloudApi:
 
         :return: HP working status
         """
-        url = "TopPage=1&Subpage=6"
-        status = self.get_raw(url).json()["HeatingCircleData"]["circle_status"]
+        status = self.get_circle_2()["HeatingCircleData"]["circle_status"]
         return bool(int(status))
 
     def get_external_unit_power(self):
@@ -209,8 +218,6 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    print(os.getenv("KRONOTERM_CLOUD_USER"))
-    print(os.getenv("KRONOTERM_CLOUD_PASSWORD"))
 
     hp_api = KronotermCloudApi(
         username=os.getenv("KRONOTERM_CLOUD_USER"), password=os.getenv("KRONOTERM_CLOUD_PASSWORD")
@@ -223,3 +230,4 @@ if __name__ == "__main__":
     print(hp_api.get_working_function())
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
+    print(hp_api.get_circle_2())
