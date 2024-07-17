@@ -12,15 +12,21 @@ authors = [{name = "Matevž", email = "matevzlesko@gmail.com"},]
 
 license = {file = "LICENSE"}
 
+requires-python = ">=3.8"
 dependencies = [
     "requests>=2.32.3",
     "cachetools>=5.4.0"
 ]
 
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
-  "Programming Language :: Python"
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
 ]
+
+[project.urls]
+Homepage = "https://github.com/LeskoIam/kronoterm_cloud_api"
+Issues = "https://github.com/LeskoIam/kronoterm_cloud_api/issues"
 
 
 [tool.ruff]
@@ -89,18 +95,15 @@ ignore = [
     "D407",
     # Section name should end with a newline
     "D406",
-    # Missing blank line before section
-    "D411",
     # Unnecessary open mode parameters (explicit is better than implicit)
     "UP015",
     # Local variable is assigned to but never used
     "F841",
-    # Invalid module name
-    "N999",
-    # Unused import
-    "F401",
-    # Missing docstring in public nested class
-    "D106",
+    # Use context handler for opening files
+    "SIM115",
+    # `scope='function'` is implied in `@pytest.fixture()`
+    "PT003"
+
 ]
 
 # Avoid trying to fix flake8-bugbear (`B`) violations

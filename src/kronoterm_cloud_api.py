@@ -3,8 +3,7 @@ from datetime import datetime
 
 import requests
 from cachetools import TTLCache, cached
-
-from src.hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction
+from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
