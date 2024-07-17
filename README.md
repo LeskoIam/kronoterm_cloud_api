@@ -1,0 +1,1 @@
+# Kronoterm cloud API (unofficial)
