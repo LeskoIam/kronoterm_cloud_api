@@ -98,6 +98,14 @@ class KronotermCloudApi:
         log.debug(data)
         return data
 
+    def get_outside_temperature(self) -> float:
+        """Get current outside temperature.
+
+        :return: outside temperature in [C]
+        """
+        data = self.get_system_review()["TemperaturesAndConfig"]["outside_temp"]
+        return float(data)
+
     def get_working_function(self) -> WorkingFunction:
         """Get currently set HP working function
 
@@ -252,5 +260,6 @@ if __name__ == "__main__":
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
     print(hp_api.get_circle_2())
+    print(hp_api.get_outside_temperature())
 
     print(hp_api.get_power_consumption())
