@@ -1,10 +1,9 @@
 import logging
 from datetime import datetime
-from pprint import pprint
 
 import requests
 from cachetools import TTLCache, cached
-from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction, ConsumptionHistogramData
+from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
@@ -60,6 +59,7 @@ class KronotermCloudApi:
         url = self._base_api_url + url
         log.debug("GET: '%s'", url)
         response = requests.get(url, headers=self.headers, **kwargs)
+        log.debug("GET RESP: '%s'", response)
         return response
 
     def post_raw(self, url, **kwargs):
@@ -77,6 +77,7 @@ class KronotermCloudApi:
         url = self._base_api_url + url
         log.debug("POST: '%s'", url)
         response = requests.post(url, headers=headers, **kwargs)
+        log.debug("POST RESP: '%s'", response)
         return response
 
     @cached(cache=TTLCache(maxsize=512, ttl=30))
@@ -95,7 +96,6 @@ class KronotermCloudApi:
         :return: circle 2 data
         """
         data = self.get_raw(APIEndpoint.HEATING_LOOP_2.value).json()
-        log.debug(data)
         return data
 
     def get_outside_temperature(self) -> float:
@@ -177,36 +177,35 @@ class KronotermCloudApi:
             "type": "hour",
             "aValues[]": TimelineGraphRequestData.ELECTRIC_CONSUMPTION.value,
         }
+        log.debug("request_data: %s", request_data)
         response = self.post_raw(APIEndpoint.TIMELINE_GRAPH.value, data=request_data, headers=self.headers).json()
-        log.info("today: %s; ", today)
-        log.info("request_data: %s", request_data)
-        log.info("response: %s", response)
+        log.debug("response: %s", response)
 
         self.verify_graph_timeseries(response, today)
         power = response["trend_data"]["V29"][-1]
-        log.info("power: %s W", power)
+        log.debug("power: %s W", power)
         return power
 
-    def get_power_consumption(self) -> float:
-        today = datetime.now()
-        day_of_year = today.timetuple().tm_yday
-
-        request_data = {
-            "year": today.year,
-            "d1": day_of_year,
-            "d2": 0,
-            "type": "day",
-            "aValues[]": 17,
-            "dValues[]": [91]
-        }
-        # 91 ...TapWaterLowTariffPerc
-        response = self.post_raw(APIEndpoint.CONSUMPTION_HISTOGRAM.value, data=request_data, headers=self.headers).json()
-        log.info("today: %s; ", today)
-        log.info("request_data: %s", request_data)
-        log.info("response: %s", response)
-        pprint(response["trend_consumption"]["TapWaterLowTariffPerc"])
-        # pprint(response["trend_consumption"]["TapWaterHighTariffPerc"])
-        # self.verify_graph_timeseries(response, today)
+    # def get_power_consumption(self) -> float:
+    #     today = datetime.now()
+    #     day_of_year = today.timetuple().tm_yday
+    #
+    #     request_data = {
+    #         "year": today.year,
+    #         "d1": day_of_year,
+    #         "d2": 0,
+    #         "type": "day",
+    #         "aValues[]": 17,
+    #         "dValues[]": [91],
+    #     }
+    #     # 91 ...TapWaterLowTariffPerc
+    #   response = self.post_raw(APIEndpoint.CONSUMPTION_HISTOGRAM.value, data=request_data, headers=self.headers).json()
+    #     log.debug("today: %s; ", today)
+    #     log.debug("request_data: %s", request_data)
+    #     log.debug("response: %s", response)
+    #     pprint(response["trend_consumption"]["TapWaterLowTariffPerc"])
+    #     pprint(response["trend_consumption"]["TapWaterHighTariffPerc"])
+    #     self.verify_graph_timeseries(response, today)
 
     @staticmethod
     def verify_graph_timeseries(timeline_graph_response: dict, today: datetime) -> bool:
@@ -228,9 +227,9 @@ class KronotermCloudApi:
             f"{today.year} {day_of_year} {today.hour}:{minutes}:{seconds}",
             "%Y %j %H:%M:%S",
         )
-        log.info("power_datetime: %s", power_datetime)
+        log.debug("power_datetime: %s", power_datetime)
         t_d = today - power_datetime
-        log.info("t_d.seconds: %s", t_d.seconds)
+        log.debug("t_d.seconds: %s", t_d.seconds)
         if t_d.seconds > 120:
             log.warning(
                 "Last power reading is older than 2 minutes. Power reading time '%s'; raw_seconds: %s",
@@ -262,4 +261,4 @@ if __name__ == "__main__":
     print(hp_api.get_circle_2())
     print(hp_api.get_outside_temperature())
 
-    print(hp_api.get_power_consumption())
+    # print(hp_api.get_power_consumption())
