@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime
+from pprint import pprint
 
 import requests
 from cachetools import TTLCache, cached
-from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction
+from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction, ConsumptionHistogramData
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
@@ -178,6 +179,27 @@ class KronotermCloudApi:
         log.info("power: %s W", power)
         return power
 
+    def get_power_consumption(self) -> float:
+        today = datetime.now()
+        day_of_year = today.timetuple().tm_yday
+
+        request_data = {
+            "year": today.year,
+            "d1": day_of_year,
+            "d2": 0,
+            "type": "day",
+            "aValues[]": 17,
+            "dValues[]": [91]
+        }
+        # 91 ...TapWaterLowTariffPerc
+        response = self.post_raw(APIEndpoint.CONSUMPTION_HISTOGRAM.value, data=request_data, headers=self.headers).json()
+        log.info("today: %s; ", today)
+        log.info("request_data: %s", request_data)
+        log.info("response: %s", response)
+        pprint(response["trend_consumption"]["TapWaterLowTariffPerc"])
+        # pprint(response["trend_consumption"]["TapWaterHighTariffPerc"])
+        # self.verify_graph_timeseries(response, today)
+
     @staticmethod
     def verify_graph_timeseries(timeline_graph_response: dict, today: datetime) -> bool:
         """Verify if graph timeseries data is valid by checking
@@ -230,3 +252,5 @@ if __name__ == "__main__":
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
     print(hp_api.get_circle_2())
+
+    print(hp_api.get_power_consumption())
