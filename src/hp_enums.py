@@ -17,8 +17,13 @@ class APIEndpoint(Enum):
     SYSTEM_REVIEW = "TopPage=1&Subpage=2"
     HEATING_LOOP_2 = "TopPage=1&Subpage=6"
     TIMELINE_GRAPH = "TopPage=4&Subpage=1&Action=3"
+    CONSUMPTION_HISTOGRAM = "TopPage=4&Subpage=4&Action=4"
 
 
 class TimelineGraphRequestData(Enum):
     INVERTER_FREQUENCY = 27
     ELECTRIC_CONSUMPTION = 29
+
+
+class ConsumptionHistogramData(Enum):
+    CONSUMPTION = 17  # TODO: not correct!
