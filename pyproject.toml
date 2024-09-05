@@ -102,7 +102,9 @@ ignore = [
     # Use context handler for opening files
     "SIM115",
     # `scope='function'` is implied in `@pytest.fixture()`
-    "PT003"
+    "PT003",
+    # Exception should be named with an Error suffix
+    "N818"
 
 ]
 
