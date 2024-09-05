@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 from cachetools import TTLCache, cached
-from hp_enums import APIEndpoint, TimelineGraphRequestData, WorkingFunction
+from hp_enums import APIEndpoint, WorkingFunction, HeatingLoop, HeatingLoopMode
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
@@ -11,21 +11,25 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
+class KronotermCloudApiException(Exception):
+    pass
 
-DEFAULT_HEADERS = {
-    "Host": "cloud.kronoterm.com",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
-    "Accept": "*/*",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Priority": "u=0, i",
-    "Cookie": "",
-}
-
+class KronotermCloudApiSetFailedException(KronotermCloudApiException):
+    pass
 
 class KronotermCloudApi:
+    DEFAULT_HEADERS = {
+        "Host": "cloud.kronoterm.com",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Priority": "u=0, i",
+        "Cookie": "",
+    }
+
     def __init__(self, username: str, password: str):
         """Kronoterm heat pump cloud API.
 
@@ -37,7 +41,7 @@ class KronotermCloudApi:
 
         self._base_api_url = "https://cloud.kronoterm.com/jsoncgi.php?"
         self._login_url = "https://cloud.kronoterm.com/?login=1"
-        self.headers = DEFAULT_HEADERS.copy()
+        self.headers = self.DEFAULT_HEADERS.copy()
         self.session_id = None
 
     def login(self):
@@ -154,90 +158,53 @@ class KronotermCloudApi:
         status = self.get_circle_2()["HeatingCircleData"]["circle_status"]
         return bool(int(status))
 
-    def get_external_unit_power(self):
+    def get_heating_loop_mode(self, heating_loop: HeatingLoop) -> HeatingLoopMode:
+        """Get the mode of heating loop:
+           - ON
+           - OFF
+           - AUTO
+
+        :param heating_loop: for which loop to set mode
+        :return mode: mode of the loop
         """
-        data = {"year": "2024",
-                "d1": "195",     # day of the year
-                "d2": "21",      # hour ... or not, depending on type
-                "type": "hour",  # year, month, hour, week, day, hour
-                "aValues[]": "29"}  # analog data to graph
+        # TODO: Figure out heating_loop, probably different circle
+        mode = self.get_circle_2()["HeatingCircleData"]["circle_mode"]
+        return HeatingLoopMode(mode)
 
-        :return: Current power in [A]
+    def set_heating_loop_mode(self, heating_loop: HeatingLoop, mode: HeatingLoopMode) -> bool:
+        """Set the mode of heating loop:
+           - ON
+           - OFF
+           - AUTO
+
+        :param heating_loop: for which loop to set mode
+        :param mode: mode of the loop
         """
-        # research aValues[]!!!
-
-        today = datetime.now()
-        day_of_year = today.timetuple().tm_yday
-        hour = today.hour
-
+        # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
         request_data = {
-            "year": today.year,
-            "d1": day_of_year,
-            "d2": hour,
-            "type": "hour",
-            "aValues[]": TimelineGraphRequestData.ELECTRIC_CONSUMPTION.value,
+            "param_name": "circle_status",
+            "param_value": mode.value,
+            "page": 6
         }
         log.debug("request_data: %s", request_data)
-        response = self.post_raw(APIEndpoint.TIMELINE_GRAPH.value, data=request_data, headers=self.headers).json()
-        log.debug("response: %s", response)
+        response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
+        return response.get("result", False) == "success"
 
-        self.verify_graph_timeseries(response, today)
-        power = response["trend_data"]["V29"][-1]
-        log.debug("power: %s W", power)
-        return power
+    def set_heating_loop_temperature(self, heating_loop: HeatingLoop, temperature: int | float) -> bool:
+        """Set heating loop temperature.
 
-    # def get_power_consumption(self) -> float:
-    #     today = datetime.now()
-    #     day_of_year = today.timetuple().tm_yday
-    #
-    #     request_data = {
-    #         "year": today.year,
-    #         "d1": day_of_year,
-    #         "d2": 0,
-    #         "type": "day",
-    #         "aValues[]": 17,
-    #         "dValues[]": [91],
-    #     }
-    #     # 91 ...TapWaterLowTariffPerc
-    #   response = self.post_raw(APIEndpoint.CONSUMPTION_HISTOGRAM.value, data=request_data, headers=self.headers).json()
-    #     log.debug("today: %s; ", today)
-    #     log.debug("request_data: %s", request_data)
-    #     log.debug("response: %s", response)
-    #     pprint(response["trend_consumption"]["TapWaterLowTariffPerc"])
-    #     pprint(response["trend_consumption"]["TapWaterHighTariffPerc"])
-    #     self.verify_graph_timeseries(response, today)
-
-    @staticmethod
-    def verify_graph_timeseries(timeline_graph_response: dict, today: datetime) -> bool:
-        """Verify if graph timeseries data is valid by checking
-         last timestamp against current time.
-
-        :param timeline_graph_response: response from TIMELINE_GRAPH API endpoint
-        :param today: current datetime
-        :return: is graph timeseries valid
+        :param heating_loop: for which loop to set temperature
+        :param temperature: temperature to set
         """
-        day_of_year = today.timetuple().tm_yday
-        try:
-            raw_seconds = timeline_graph_response["trend_data"]["x"][-1]
-        except IndexError as err:
-            log.error(err)
-            return False
-        minutes, seconds = divmod(raw_seconds, 60)
-        power_datetime = datetime.strptime(
-            f"{today.year} {day_of_year} {today.hour}:{minutes}:{seconds}",
-            "%Y %j %H:%M:%S",
-        )
-        log.debug("power_datetime: %s", power_datetime)
-        t_d = today - power_datetime
-        log.debug("t_d.seconds: %s", t_d.seconds)
-        if t_d.seconds > 120:
-            log.warning(
-                "Last power reading is older than 2 minutes. Power reading time '%s'; raw_seconds: %s",
-                power_datetime,
-                raw_seconds,
-            )
-            return False
-        return True
+        # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
+        request_data = {
+            "param_name": "circle_temp",
+            "param_value": temperature,
+            "page": 6
+        }
+        log.debug("request_data: %s", request_data)
+        response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
+        return response.get("result", False) == "success"
 
 
 if __name__ == "__main__":
@@ -252,13 +219,12 @@ if __name__ == "__main__":
     )
     hp_api.login()
 
-    Pex = hp_api.get_external_unit_power()
-    print(Pex)
-
+    print(hp_api.set_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP, HeatingLoopMode.AUTO))
     print(hp_api.get_working_function())
+    print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))
+    print(hp_api.set_heating_loop_temperature(HeatingLoop.LOW_TEMPERATURE_LOOP, 24))
+
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
-    print(hp_api.get_circle_2())
     print(hp_api.get_outside_temperature())
 
-    # print(hp_api.get_power_consumption())
