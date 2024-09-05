@@ -146,6 +146,14 @@ class KronotermCloudApi:
         dv_temp = self.get_system_review()["CurrentFunctionData"][0]["dv_temp"]
         return float(dv_temp)
 
+    def get_sanitary_water_temp(self) -> float:
+        """Get current sanitary water temperature.
+
+        :return: sanitary water temperature in [C]
+        """
+        dv_temp = self.get_system_review()["TemperaturesAndConfig"]["tap_water_temp"]
+        return float(dv_temp)
+
     def get_heating_loop_set_temperature(self, heating_loop: HeatingLoop) -> float:
         """Get currently set convector (room) temperature.
 
@@ -224,3 +232,4 @@ if __name__ == "__main__":
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
     print(hp_api.get_outside_temperature())
+    print(hp_api.get_sanitary_water_temp())
