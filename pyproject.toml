@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kronoterm-cloud-api"
-version = "0.0.2"
+version = "0.0.3"
 readme = "README.md"
 description = "API for Kronoterm heat pumps cloud"
 authors = [{name = "Matevž", email = "matevzlesko@gmail.com"},]
