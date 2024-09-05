@@ -145,11 +145,12 @@ class KronotermCloudApi:
         dv_temp = self.get_system_review()["CurrentFunctionData"][0]["dv_temp"]
         return float(dv_temp)
 
-    def get_set_convector_temp(self) -> float:
+    def get_heating_loop_set_temperature(self, heating_loop: HeatingLoop) -> float:
         """Get currently set convector (room) temperature.
 
         :return: currently set convector temperature in [C]
         """
+        # TODO: Figure out heating_loop, probably different circle
         set_temp = self.get_circle_2()["HeatingCircleData"]["circle_temp"]
         return float(set_temp)
 
