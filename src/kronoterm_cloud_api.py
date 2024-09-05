@@ -44,13 +44,14 @@ class KronotermCloudApi:
 
         self._base_api_url = "https://cloud.kronoterm.com/jsoncgi.php?"
         self._login_url = "https://cloud.kronoterm.com/?login=1"
-        self.headers = self.DEFAULT_HEADERS.copy()
+        self.headers = None
         self.session_id = None
 
     def login(self):
         """Log in to cloud."""
 
         login_data = {"username": self.username, "password": self.password}
+        self.headers = self.DEFAULT_HEADERS.copy()
         login_response = requests.post(self._login_url, data=login_data, headers=self.headers)
         self.session_id = login_response.cookies["PHPSESSID"]
         self.headers["Cookie"] = f"PHPSESSID={self.session_id}"
