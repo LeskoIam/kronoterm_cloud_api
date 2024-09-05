@@ -1,21 +1,24 @@
 import logging
-from datetime import datetime
 
 import requests
 from cachetools import TTLCache, cached
-from hp_enums import APIEndpoint, WorkingFunction, HeatingLoop, HeatingLoopMode
+
+from hp_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
     format="%(asctime)s [%(levelname)8s] [%(filename)s:%(lineno)4s:%(funcName)20s()]\t%(message)s",
-    level=logging.DEBUG,
+    level=logging.INFO,
 )
+
 
 class KronotermCloudApiException(Exception):
     pass
 
+
 class KronotermCloudApiSetFailedException(KronotermCloudApiException):
     pass
+
 
 class KronotermCloudApi:
     DEFAULT_HEADERS = {
@@ -181,11 +184,7 @@ class KronotermCloudApi:
         :param mode: mode of the loop
         """
         # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
-        request_data = {
-            "param_name": "circle_status",
-            "param_value": mode.value,
-            "page": 6
-        }
+        request_data = {"param_name": "circle_status", "param_value": mode.value, "page": 6}
         log.debug("request_data: %s", request_data)
         response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
@@ -197,11 +196,7 @@ class KronotermCloudApi:
         :param temperature: temperature to set
         """
         # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
-        request_data = {
-            "param_name": "circle_temp",
-            "param_value": temperature,
-            "page": 6
-        }
+        request_data = {"param_name": "circle_temp", "param_value": temperature, "page": 6}
         log.debug("request_data: %s", request_data)
         response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
@@ -227,4 +222,3 @@ if __name__ == "__main__":
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
     print(hp_api.get_outside_temperature())
-

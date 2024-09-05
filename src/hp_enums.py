@@ -20,9 +20,11 @@ class APIEndpoint(Enum):
     CONSUMPTION_HISTOGRAM = "TopPage=4&Subpage=4&Action=4"
     SET_HEATING_LOOP_2 = "TopPage=1&Subpage=6&Action=1"
 
+
 class HeatingLoop(Enum):
     HIGH_TEMPERATURE_LOOP = 1  # Radiators
-    LOW_TEMPERATURE_LOOP = 2   # Convectors
+    LOW_TEMPERATURE_LOOP = 2  # Convectors
+
 
 class HeatingLoopMode(Enum):
     OFF = 0
