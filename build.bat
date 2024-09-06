@@ -1,3 +1,5 @@
+rm dist/*
+
 python -m bumpver update --patch
 
 python -m build
