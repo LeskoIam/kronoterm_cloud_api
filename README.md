@@ -1,25 +1,18 @@
+[![ruff](https://github.com/LeskoIam/kronoterm_cloud_api/actions/workflows/ruff.yml/badge.svg?branch=master)](https://github.com/LeskoIam/kronoterm_cloud_api/actions/workflows/ruff.yml)
 # Kronoterm cloud API (unofficial)
 
 API client for controlling Kronoterm heat pumps via their cloud (cloud.kronoterm.com/).
 
 ## Installation
 
-1. Download latest release
-2. Install using `pip`
+1. Install using `pip`
    ```shell
    python -m pip install kronoterm_cloud_api
    ```
-3. Enjoy!
+2. Enjoy!
 
 ## Examples
-24.0
-23.4
-11.4
-WorkingFunction.HP_FUNCTION_SLEEP
-HeatingLoopMode.AUTO
-True
-True
-11.4
+
 ```python
 from kronoterm_cloud_api import KronotermCloudApi
 from kronoterm_cloud_api import HeatingLoop, HeatingLoopMode
