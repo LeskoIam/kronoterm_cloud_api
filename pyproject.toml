@@ -9,7 +9,6 @@ readme = "README.md"
 description = "API for Kronoterm heat pumps cloud"
 authors = [{name = "Matevž", email = "matevzlesko@gmail.com"},]
 
-
 license = {file = "LICENSE"}
 
 requires-python = ">=3.8"
@@ -28,6 +27,29 @@ classifiers = [
 Homepage = "https://github.com/LeskoIam/kronoterm_cloud_api"
 Issues = "https://github.com/LeskoIam/kronoterm_cloud_api/issues"
 
+
+[tool.bumpver]
+current_version = "0.0.4"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "Bump version {old_version} -> {new_version}."
+tag_message = "v{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = false
+
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"'
+]
+#"README.md" = [
+#    "{version}",
+#    "{pep440_version}",
+#]
 
 [tool.ruff]
 target-version = "py312"
