@@ -1,6 +1,5 @@
 # Base (production)
 requests>=2.32.3
-cachetools>=5.5.0
 python-dotenv>=1.0.1
 
 # Development

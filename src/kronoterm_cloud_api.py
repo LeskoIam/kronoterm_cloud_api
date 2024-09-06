@@ -1,7 +1,6 @@
 import logging
 
 import requests
-from cachetools import TTLCache, cached
 
 from hp_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
 
@@ -88,7 +87,6 @@ class KronotermCloudApi:
         log.debug("POST RESP: '%s'", response)
         return response
 
-    @cached(cache=TTLCache(maxsize=512, ttl=30))
     def get_system_review(self) -> dict:
         """Get system review data.
 
@@ -97,7 +95,6 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.SYSTEM_REVIEW.value).json()
         return data
 
-    @cached(cache=TTLCache(maxsize=512, ttl=30))
     def get_circle_2(self) -> dict:
         """Get circle 2 data.
 
