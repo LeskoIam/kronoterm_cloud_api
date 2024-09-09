@@ -151,7 +151,7 @@ class KronotermCloudApi:
         dv_temp = self.get_system_review()["TemperaturesAndConfig"]["tap_water_temp"]
         return float(dv_temp)
 
-    def get_heating_loop_set_temperature(self, heating_loop: HeatingLoop) -> float:
+    def get_heating_loop_target_temperature(self, heating_loop: HeatingLoop) -> float:
         """Get currently set convector (room) temperature.
 
         :return: currently set convector temperature in [C]
@@ -196,7 +196,7 @@ class KronotermCloudApi:
         response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
-    def set_heating_loop_temperature(self, heating_loop: HeatingLoop, temperature: int | float) -> bool:
+    def set_heating_loop_target_temperature(self, heating_loop: HeatingLoop, temperature: int | float) -> bool:
         """Set heating loop temperature.
 
         :param heating_loop: for which loop to set temperature
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     print(hp_api.set_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP, HeatingLoopMode.AUTO))
     print(hp_api.get_working_function())
     print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))
-    print(hp_api.set_heating_loop_temperature(HeatingLoop.LOW_TEMPERATURE_LOOP, 24))
+    print(hp_api.set_heating_loop_target_temperature(HeatingLoop.LOW_TEMPERATURE_LOOP, 24))
 
     print(hp_api.get_reservoir_temp())
     print(hp_api.get_room_temp())
