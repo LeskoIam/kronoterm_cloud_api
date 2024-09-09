@@ -167,12 +167,12 @@ class KronotermCloudApi:
         set_temp = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_temp"]
         return float(set_temp)
 
-    def get_working_status(self) -> bool:
+    def get_heating_loop_working_status(self, loop: HeatingLoop) -> bool:
         """Get HP working status.
 
         :return: HP working status
         """
-        status = self.get_heating_loop_data()["HeatingCircleData"]["circle_status"]
+        status = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_status"]
         return bool(int(status))
 
     def get_heating_loop_mode(self, loop: HeatingLoop) -> HeatingLoopMode:
@@ -196,10 +196,16 @@ class KronotermCloudApi:
         :param loop: for which loop to set mode
         :param mode: mode of the loop
         """
-        # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
+        match loop:
+            case HeatingLoop.LOW_TEMPERATURE_LOOP:
+                loop_url = APIEndpoint.SET_HEATING_LOOP_2.value
+            # case HeatingLoop.HIGH_TEMPERATURE_LOOP:
+            #     loop_url = APIEndpoint.SET_HEATING_LOOP_1.value
+            case _:
+                raise ValueError(f"Heating loop '{loop.name}' not supported")
         request_data = {"param_name": "circle_status", "param_value": mode.value, "page": 6}
         log.debug("request_data: %s", request_data)
-        response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
+        response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
     def set_heating_loop_target_temperature(self, loop: HeatingLoop, temperature: int | float) -> bool:
@@ -208,10 +214,16 @@ class KronotermCloudApi:
         :param loop: for which loop to set temperature
         :param temperature: temperature to set
         """
-        # TODO: Figure out heating_loop, probably "page" and possibly also ApiEndpoint
+        match loop:
+            case HeatingLoop.LOW_TEMPERATURE_LOOP:
+                loop_url = APIEndpoint.SET_HEATING_LOOP_2.value
+            # case HeatingLoop.HIGH_TEMPERATURE_LOOP:
+            #     loop_url = APIEndpoint.SET_HEATING_LOOP_1.value
+            case _:
+                raise ValueError(f"Heating loop '{loop.name}' not supported")
         request_data = {"param_name": "circle_temp", "param_value": temperature, "page": 6}
         log.debug("request_data: %s", request_data)
-        response = self.post_raw(APIEndpoint.SET_HEATING_LOOP_2.value, data=request_data, headers=self.headers).json()
+        response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
 
@@ -237,3 +249,4 @@ if __name__ == "__main__":
     print(hp_api.get_outside_temperature())
     print(hp_api.get_sanitary_water_temp())
     print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))
+    print(hp_api.get_heating_loop_working_status(HeatingLoop.LOW_TEMPERATURE_LOOP))
