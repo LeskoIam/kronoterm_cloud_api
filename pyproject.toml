@@ -48,10 +48,7 @@ push = true
 "src/kronoterm_cloud_api.py" = [
     '__version__ = "{version}"'
 ]
-#"README.md" = [
-#    "{version}",
-#    "{pep440_version}",
-#]
+
 
 [tool.ruff]
 target-version = "py312"

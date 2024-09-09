@@ -6,8 +6,9 @@ python-dotenv>=1.0.1
 ruff>=0.6.4
 
 # Build
-build>=1.2.1
+build==1.2.2
 bumpver>=2023.1129
 
 # Distribute
 twine>=5.1.1
+pydoc-markdown>=4.8.2

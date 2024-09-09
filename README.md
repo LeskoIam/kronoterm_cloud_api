@@ -13,6 +13,10 @@ API client for controlling Kronoterm heat pumps via their cloud (cloud.kronoterm
    ```
 2. Enjoy!
 
+
+## Documentation
+API documentation available [here](./docs/kronoterm_cloud_api_docs.md).
+
 ## Examples
 
 ```python
