@@ -3,7 +3,8 @@ __version__ = "0.1.1"
 import logging
 
 import requests
-from enums.hp_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
+
+from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(

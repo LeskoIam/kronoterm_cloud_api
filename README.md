@@ -16,8 +16,8 @@ API client for controlling Kronoterm heat pumps via their cloud (cloud.kronoterm
 ## Examples
 
 ```python
-from kronoterm_cloud_api.kronoterm_cloud_api import KronotermCloudApi
-from kronoterm_cloud_api.enums.hp_enums import HeatingLoop, HeatingLoopMode
+from kronoterm_cloud_api import KronotermCloudApi
+from kronoterm_enums import HeatingLoop, HeatingLoopMode
 
 hp_api = KronotermCloudApi("your-kronoterm-cloud-username", "your-kronoterm-cloud-password")
 hp_api.login()

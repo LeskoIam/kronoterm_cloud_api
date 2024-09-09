@@ -45,7 +45,7 @@ push = true
     'current_version = "{version}"',
     'version = "{version}"'
 ]
-"src/kronoterm_cloud_api/kronoterm_cloud_api.py" = [
+"src/kronoterm_cloud_api.py" = [
     '__version__ = "{version}"'
 ]
 #"README.md" = [
