@@ -1,8 +1,7 @@
 import logging
 
 import requests
-
-from hp_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
+from enums.hp_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
