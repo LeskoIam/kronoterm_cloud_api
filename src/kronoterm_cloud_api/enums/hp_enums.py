@@ -15,10 +15,12 @@ class WorkingFunction(Enum):
 
 class APIEndpoint(Enum):
     SYSTEM_REVIEW = "TopPage=1&Subpage=2"
+    # HEATING_LOOP_1 = "TopPage=1&Subpage=6"
+    # SET_HEATING_LOOP_1 = "TopPage=1&Subpage=6&Action=1"
     HEATING_LOOP_2 = "TopPage=1&Subpage=6"
+    SET_HEATING_LOOP_2 = "TopPage=1&Subpage=6&Action=1"
     TIMELINE_GRAPH = "TopPage=4&Subpage=1&Action=3"
     CONSUMPTION_HISTOGRAM = "TopPage=4&Subpage=4&Action=4"
-    SET_HEATING_LOOP_2 = "TopPage=1&Subpage=6&Action=1"
 
 
 class HeatingLoop(Enum):
