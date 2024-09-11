@@ -66,9 +66,9 @@ class KronotermCloudApi:
         :return: response
         """
         url = self._base_api_url + url
-        log.debug("GET: '%s'", url)
+        log.info("GET: '%s' [headers='%s', kwargs='%s']", url, self.headers, kwargs)
         response = requests.get(url, headers=self.headers, **kwargs)
-        log.debug("GET RESP: '%s'", response)
+        log.info("GET RESP: '%s'", response.text)
         return response
 
     def post_raw(self, url, **kwargs):
@@ -84,9 +84,9 @@ class KronotermCloudApi:
         else:
             headers = self.headers
         url = self._base_api_url + url
-        log.debug("POST: '%s'", url)
+        log.info("POST: '%s' [headers='%s', kwargs='%s']", url, headers, kwargs)
         response = requests.post(url, headers=headers, **kwargs)
-        log.debug("POST RESP: '%s'", response)
+        log.info("POST RESP: '%s'", response.text)
         return response
 
     def get_system_review_data(self) -> dict:
@@ -205,7 +205,6 @@ class KronotermCloudApi:
             case _:
                 raise ValueError(f"Heating loop '{loop.name}' not supported")
         request_data = {"param_name": "circle_status", "param_value": mode.value, "page": 6}
-        log.debug("request_data: %s", request_data)
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
@@ -223,7 +222,6 @@ class KronotermCloudApi:
             case _:
                 raise ValueError(f"Heating loop '{loop.name}' not supported")
         request_data = {"param_name": "circle_temp", "param_value": temperature, "page": 6}
-        log.debug("request_data: %s", request_data)
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
