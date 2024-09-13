@@ -4,9 +4,10 @@ from kronoterm_cloud_api import KronotermCloudApi, KronotermCloudApiException
 
 
 def test_login_success(kronoterm_user):
-    """GIVEN user with valid credentials
-       WHEN user tries to log-in
-       THEN log-in must succeed (no exception raised)
+    """
+    GIVEN user with valid credentials
+    WHEN user tries to log-in
+    THEN log-in must succeed (no exception raised)
     """
     kronoterm_cloud_api = KronotermCloudApi(**kronoterm_user)
     try:
@@ -16,9 +17,10 @@ def test_login_success(kronoterm_user):
 
 
 def test_login_failed(kronoterm_user):
-    """GIVEN user with invalid credentials
-       WHEN user tries to log-in
-       THEN log-in must fail with KronotermCloudApiException exception
+    """
+    GIVEN user with invalid credentials
+    WHEN user tries to log-in
+    THEN log-in must fail with KronotermCloudApiException exception
     """
     kronoterm_cloud_api = KronotermCloudApi(username="TestUserNonExisting", password=kronoterm_user["password"])
     with pytest.raises(KronotermCloudApiException):
