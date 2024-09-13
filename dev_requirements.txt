@@ -5,3 +5,6 @@
 # Development
 ruff>=0.6.4
 bumpver>=2023.1129
+
+# Testing
+pytest>=8.3.3
