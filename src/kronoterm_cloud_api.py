@@ -54,6 +54,11 @@ class KronotermCloudApi:
         login_data = {"username": self.username, "password": self.password}
         self.headers = self.DEFAULT_HEADERS.copy()
         login_response = requests.post(self._login_url, data=login_data, headers=self.headers)
+        log.info(login_response.cookies)
+        log.info(login_response.status_code)
+        if (reason := login_response.cookies.get("AuthReason", None)) is not None:
+            log.error("Login failed '%s'", reason)
+            raise KronotermCloudApiException("Login failed '%s'", reason)
         self.session_id = login_response.cookies["PHPSESSID"]
         self.headers["Cookie"] = f"PHPSESSID={self.session_id}"
         log.info("Logged in and session cookie set.")
