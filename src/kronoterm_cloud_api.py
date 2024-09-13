@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, WorkingFunction
+from kronoterm_enums import APIEndpoint, CircuitStatus, HeatingLoop, HeatingLoopMode, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
@@ -47,6 +47,13 @@ class KronotermCloudApi:
         self._login_url = "https://cloud.kronoterm.com/?login=1"
         self.headers = None
         self.session_id = None
+
+        # Heat pump information
+        self.hp_id: str | None = None
+        self.user_level: str | None = None
+        self.location_name: str | None = None
+        self.loop_names: str | None = None  # CircleNames
+        self.active_errors_count: str | None = None
 
     def login(self):
         """Log in to cloud."""
@@ -94,8 +101,34 @@ class KronotermCloudApi:
         log.info("POST RESP: '%s'", response.text)
         return response
 
+    def update_heat_pump_basic_information(self):
+        """Update heat pump information from INITIAL load data."""
+
+        data = self.get_initial_data()
+        self.hp_id = data.get("hp_id")
+        self.user_level = data.get("user_level")
+        self.location_name = data.get("Location")
+        self.loop_names = data.get("CircleNames")
+        self.active_errors_count = int(data.get("ActiveErrorsCnt"))
+
+    def get_initial_data(self) -> dict:
+        """Get initial data.
+
+        :return: initial data
+        """
+        data = self.get_raw(APIEndpoint.INITIAL.value).json()
+        return data
+
+    def get_basic_data(self) -> dict:
+        """Get basic view data.
+
+        :return: basic view data
+        """
+        data = self.get_raw(APIEndpoint.BASIC.value).json()
+        return data
+
     def get_system_review_data(self) -> dict:
-        """Get system review data.
+        """Get system review view data.
 
         :return: system review data
         """
@@ -103,26 +136,50 @@ class KronotermCloudApi:
         return data
 
     def get_heating_loop_data(self, loop: HeatingLoop) -> dict:
-        """Get heating loop data.
+        """Get heating loop view data. Supports:
+        - HEATING_LOOP_1
+        - HEATING_LOOP_2
+        - TAP_WATER
 
         :return: heating loop data
         """
         match loop:
-            case HeatingLoop.LOW_TEMPERATURE_LOOP:
+            case HeatingLoop.HEATING_LOOP_1:
+                loop_url = APIEndpoint.HEATING_LOOP_1.value
+            case HeatingLoop.HEATING_LOOP_2:
                 loop_url = APIEndpoint.HEATING_LOOP_2.value
-            # case HeatingLoop.HIGH_TEMPERATURE_LOOP:
-            #     loop_url = APIEndpoint.HEATING_LOOP_1.value
+            case HeatingLoop.TAP_WATER:
+                loop_url = APIEndpoint.TAP_WATER.value
             case _:
                 raise ValueError(f"Heating loop '{loop.name}' not supported")
         data = self.get_raw(loop_url).json()
         return data
+
+    def get_alarms_data(self) -> dict:
+        """Get alarm view data.
+
+        :return: alarm data
+        """
+        data = self.get_raw(APIEndpoint.ALARMS.value).json()
+        return data
+
+    def get_alarms_data_only(self, alarms_data: dict | None = None) -> dict:
+        """Get only AlarmsData (list of alarms) part of the alarm response.
+
+        :param alarms_data: if supplied it will be parsed for AlarmsData otherwise make API request
+        :return: list of alarms
+        """
+        if alarms_data is not None:
+            return alarms_data.get("AlarmsData")
+        else:
+            return self.get_alarms_data().get("AlarmsData")
 
     def get_outside_temperature(self) -> float:
         """Get current outside temperature.
 
         :return: outside temperature in [C]
         """
-        data = self.get_system_review_data()["TemperaturesAndConfig"]["outside_temp"]
+        data = self.get_basic_data()["TemperaturesAndConfig"]["outside_temp"]
         return float(data)
 
     def get_working_function(self) -> WorkingFunction:
@@ -130,7 +187,7 @@ class KronotermCloudApi:
 
         :return: WorkingFunction Enum
         """
-        data = self.get_system_review_data()["TemperaturesAndConfig"]["working_function"]
+        data = self.get_basic_data()["TemperaturesAndConfig"]["working_function"]
         return WorkingFunction(data)
 
     def get_room_temp(self) -> float:
@@ -138,7 +195,8 @@ class KronotermCloudApi:
 
         :return: room temperature in [C]
         """
-        room_temp = self.get_system_review_data()["TemperaturesAndConfig"]["heating_circle_2_temp"]
+        # TODO: This could probably be different if kontrol thermostat is connected to different heating loop?
+        room_temp = self.get_basic_data()["TemperaturesAndConfig"]["heating_circle_2_temp"]
         return float(room_temp)
 
     def get_reservoir_temp(self) -> float:
@@ -146,7 +204,7 @@ class KronotermCloudApi:
 
         :return: reservoir temperature in [C]
         """
-        reservoir_temp = self.get_system_review_data()["TemperaturesAndConfig"]["reservoir_temp"]
+        reservoir_temp = self.get_basic_data()["TemperaturesAndConfig"]["reservoir_temp"]
         return float(reservoir_temp)
 
     def get_outlet_temp(self) -> float:
@@ -162,24 +220,24 @@ class KronotermCloudApi:
 
         :return: sanitary water temperature in [C]
         """
-        dv_temp = self.get_system_review_data()["TemperaturesAndConfig"]["tap_water_temp"]
+        dv_temp = self.get_basic_data()["TemperaturesAndConfig"]["tap_water_temp"]
         return float(dv_temp)
 
     def get_heating_loop_target_temperature(self, loop: HeatingLoop) -> float:
-        """Get currently set convector (room) temperature.
+        """Get currently set heating loop target temperature.
 
-        :return: currently set convector temperature in [C]
+        :return: currently set heating loop target temperature in [C]
         """
         set_temp = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_temp"]
         return float(set_temp)
 
-    def get_heating_loop_working_status(self, loop: HeatingLoop) -> bool:
+    def get_heating_loop_status(self, loop: HeatingLoop) -> CircuitStatus:
         """Get HP working status.
 
         :return: HP working status
         """
         status = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_status"]
-        return bool(int(status))
+        return CircuitStatus(status)
 
     def get_heating_loop_mode(self, loop: HeatingLoop) -> HeatingLoopMode:
         """Get the mode of heating loop:
@@ -203,13 +261,18 @@ class KronotermCloudApi:
         :param mode: mode of the loop
         """
         match loop:
-            case HeatingLoop.LOW_TEMPERATURE_LOOP:
-                loop_url = APIEndpoint.SET_HEATING_LOOP_2.value
-            # case HeatingLoop.HIGH_TEMPERATURE_LOOP:
-            #     loop_url = APIEndpoint.SET_HEATING_LOOP_1.value
+            case HeatingLoop.HEATING_LOOP_1:
+                loop_url = APIEndpoint.HEATING_LOOP_1_SET.value
+                page = 5
+            case HeatingLoop.HEATING_LOOP_2:
+                loop_url = APIEndpoint.HEATING_LOOP_2_SET.value
+                page = 6
+            case HeatingLoop.TAP_WATER:
+                loop_url = APIEndpoint.TAP_WATER_SET.value
+                page = 9
             case _:
                 raise ValueError(f"Heating loop '{loop.name}' not supported")
-        request_data = {"param_name": "circle_status", "param_value": mode.value, "page": 6}
+        request_data = {"param_name": "circle_status", "param_value": mode.value, "page": page}
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
@@ -220,13 +283,18 @@ class KronotermCloudApi:
         :param temperature: temperature to set
         """
         match loop:
-            case HeatingLoop.LOW_TEMPERATURE_LOOP:
-                loop_url = APIEndpoint.SET_HEATING_LOOP_2.value
-            # case HeatingLoop.HIGH_TEMPERATURE_LOOP:
-            #     loop_url = APIEndpoint.SET_HEATING_LOOP_1.value
+            case HeatingLoop.HEATING_LOOP_1:
+                loop_url = APIEndpoint.HEATING_LOOP_1_SET.value
+                page = 5
+            case HeatingLoop.HEATING_LOOP_2:
+                loop_url = APIEndpoint.HEATING_LOOP_2_SET.value
+                page = 6
+            case HeatingLoop.TAP_WATER:
+                loop_url = APIEndpoint.TAP_WATER_SET.value
+                page = 9
             case _:
                 raise ValueError(f"Heating loop '{loop.name}' not supported")
-        request_data = {"param_name": "circle_temp", "param_value": temperature, "page": 6}
+        request_data = {"param_name": "circle_temp", "param_value": temperature, "page": page}
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
@@ -242,15 +310,28 @@ if __name__ == "__main__":
         username=os.getenv("KRONOTERM_CLOUD_USER"), password=os.getenv("KRONOTERM_CLOUD_PASSWORD")
     )
     hp_api.login()
+    hp_api.update_heat_pump_basic_information()
 
-    print(hp_api.set_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP, HeatingLoopMode.AUTO))
-    print(hp_api.get_working_function())
-    print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))
-    print(hp_api.set_heating_loop_target_temperature(HeatingLoop.LOW_TEMPERATURE_LOOP, 24))
-
-    print(hp_api.get_reservoir_temp())
-    print(hp_api.get_room_temp())
-    print(hp_api.get_outside_temperature())
-    print(hp_api.get_sanitary_water_temp())
-    print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))
-    print(hp_api.get_heating_loop_working_status(HeatingLoop.LOW_TEMPERATURE_LOOP))
+    for api_return in [
+        hp_api.hp_id,
+        hp_api.user_level,
+        hp_api.location_name,
+        hp_api.loop_names,
+        hp_api.active_errors_count,
+        "\n",
+        hp_api.get_initial_data(),
+        hp_api.get_basic_data(),
+        hp_api.get_system_review_data(),
+        hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_1),
+        hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_2),
+        hp_api.get_heating_loop_data(HeatingLoop.TAP_WATER),
+        hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_1),
+        hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_2),
+        hp_api.get_heating_loop_mode(HeatingLoop.TAP_WATER),
+        hp_api.get_alarms_data(),
+        "\n",
+        hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
+        hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
+        hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
+    ]:
+        print(api_return)
