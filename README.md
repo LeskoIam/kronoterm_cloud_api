@@ -35,13 +35,13 @@ print(hp_api.get_reservoir_temp())  # Current reservoir temperature.
 
 print(hp_api.get_working_function())  # Currently set HP working function
 # >> WorkingFunction.HP_FUNCTION_SLEEP
-print(hp_api.get_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP))  # Get the mode of heating loop.
+print(hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_2))  # Get the mode of heating loop.
 # >> HeatingLoopMode.AUTO
 
-print(hp_api.set_heating_loop_target_temperature(HeatingLoop.LOW_TEMPERATURE_LOOP, 24))  # Set heating loop temperature.
+print(hp_api.set_heating_loop_target_temperature(HeatingLoop.HEATING_LOOP_2, 24))  # Set heating loop temperature.
 # >> True
 print(
-   hp_api.set_heating_loop_mode(HeatingLoop.LOW_TEMPERATURE_LOOP, HeatingLoopMode.AUTO))  # Set the mode of heating loop.
+    hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO))  # Set the mode of heating loop.
 # >> True
 
 ```
