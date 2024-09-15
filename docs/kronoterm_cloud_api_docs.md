@@ -6,8 +6,13 @@
     * [login](#kronoterm_cloud_api.KronotermCloudApi.login)
     * [get\_raw](#kronoterm_cloud_api.KronotermCloudApi.get_raw)
     * [post\_raw](#kronoterm_cloud_api.KronotermCloudApi.post_raw)
+    * [update\_heat\_pump\_basic\_information](#kronoterm_cloud_api.KronotermCloudApi.update_heat_pump_basic_information)
+    * [get\_initial\_data](#kronoterm_cloud_api.KronotermCloudApi.get_initial_data)
+    * [get\_basic\_data](#kronoterm_cloud_api.KronotermCloudApi.get_basic_data)
     * [get\_system\_review\_data](#kronoterm_cloud_api.KronotermCloudApi.get_system_review_data)
     * [get\_heating\_loop\_data](#kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_data)
+    * [get\_alarms\_data](#kronoterm_cloud_api.KronotermCloudApi.get_alarms_data)
+    * [get\_alarms\_data\_only](#kronoterm_cloud_api.KronotermCloudApi.get_alarms_data_only)
     * [get\_outside\_temperature](#kronoterm_cloud_api.KronotermCloudApi.get_outside_temperature)
     * [get\_working\_function](#kronoterm_cloud_api.KronotermCloudApi.get_working_function)
     * [get\_room\_temp](#kronoterm_cloud_api.KronotermCloudApi.get_room_temp)
@@ -15,14 +20,14 @@
     * [get\_outlet\_temp](#kronoterm_cloud_api.KronotermCloudApi.get_outlet_temp)
     * [get\_sanitary\_water\_temp](#kronoterm_cloud_api.KronotermCloudApi.get_sanitary_water_temp)
     * [get\_heating\_loop\_target\_temperature](#kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_target_temperature)
-    * [get\_heating\_loop\_working\_status](#kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_working_status)
+    * [get\_heating\_loop\_status](#kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_status)
     * [get\_heating\_loop\_mode](#kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_mode)
     * [set\_heating\_loop\_mode](#kronoterm_cloud_api.KronotermCloudApi.set_heating_loop_mode)
     * [set\_heating\_loop\_target\_temperature](#kronoterm_cloud_api.KronotermCloudApi.set_heating_loop_target_temperature)
 * [kronoterm\_enums](#kronoterm_enums)
   * [HeatingLoop](#kronoterm_enums.HeatingLoop)
-    * [HIGH\_TEMPERATURE\_LOOP](#kronoterm_enums.HeatingLoop.HIGH_TEMPERATURE_LOOP)
-    * [LOW\_TEMPERATURE\_LOOP](#kronoterm_enums.HeatingLoop.LOW_TEMPERATURE_LOOP)
+    * [HEATING\_LOOP\_1](#kronoterm_enums.HeatingLoop.HEATING_LOOP_1)
+    * [HEATING\_LOOP\_2](#kronoterm_enums.HeatingLoop.HEATING_LOOP_2)
 * [\_\_init\_\_](#__init__)
 
 <a id="kronoterm_cloud_api"></a>
@@ -100,6 +105,44 @@ POST response from given url API endpoint.
 
 response
 
+<a id="kronoterm_cloud_api.KronotermCloudApi.update_heat_pump_basic_information"></a>
+
+#### update\_heat\_pump\_basic\_information
+
+```python
+def update_heat_pump_basic_information()
+```
+
+Update heat pump information from INITIAL load data.
+
+<a id="kronoterm_cloud_api.KronotermCloudApi.get_initial_data"></a>
+
+#### get\_initial\_data
+
+```python
+def get_initial_data() -> dict
+```
+
+Get initial data.
+
+**Returns**:
+
+initial data
+
+<a id="kronoterm_cloud_api.KronotermCloudApi.get_basic_data"></a>
+
+#### get\_basic\_data
+
+```python
+def get_basic_data() -> dict
+```
+
+Get basic view data.
+
+**Returns**:
+
+basic view data
+
 <a id="kronoterm_cloud_api.KronotermCloudApi.get_system_review_data"></a>
 
 #### get\_system\_review\_data
@@ -108,7 +151,7 @@ response
 def get_system_review_data() -> dict
 ```
 
-Get system review data.
+Get system review view data.
 
 **Returns**:
 
@@ -122,11 +165,47 @@ system review data
 def get_heating_loop_data(loop: HeatingLoop) -> dict
 ```
 
-Get heating loop data.
+Get heating loop view data. Supports:
+
+- HEATING_LOOP_1
+- HEATING_LOOP_2
+- TAP_WATER
 
 **Returns**:
 
 heating loop data
+
+<a id="kronoterm_cloud_api.KronotermCloudApi.get_alarms_data"></a>
+
+#### get\_alarms\_data
+
+```python
+def get_alarms_data() -> dict
+```
+
+Get alarm view data.
+
+**Returns**:
+
+alarm data
+
+<a id="kronoterm_cloud_api.KronotermCloudApi.get_alarms_data_only"></a>
+
+#### get\_alarms\_data\_only
+
+```python
+def get_alarms_data_only(alarms_data: dict | None = None) -> dict
+```
+
+Get only AlarmsData (list of alarms) part of the alarm response.
+
+**Arguments**:
+
+- `alarms_data`: if supplied it will be parsed for AlarmsData otherwise make API request
+
+**Returns**:
+
+list of alarms
 
 <a id="kronoterm_cloud_api.KronotermCloudApi.get_outside_temperature"></a>
 
@@ -220,18 +299,18 @@ sanitary water temperature in [C]
 def get_heating_loop_target_temperature(loop: HeatingLoop) -> float
 ```
 
-Get currently set convector (room) temperature.
+Get currently set heating loop target temperature.
 
 **Returns**:
 
-currently set convector temperature in [C]
+currently set heating loop target temperature in [C]
 
-<a id="kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_working_status"></a>
+<a id="kronoterm_cloud_api.KronotermCloudApi.get_heating_loop_status"></a>
 
-#### get\_heating\_loop\_working\_status
+#### get\_heating\_loop\_status
 
 ```python
-def get_heating_loop_working_status(loop: HeatingLoop) -> bool
+def get_heating_loop_status(loop: HeatingLoop) -> HeatingLoopStatus
 ```
 
 Get HP working status.
@@ -309,15 +388,15 @@ Set heating loop temperature.
 class HeatingLoop(Enum)
 ```
 
-<a id="kronoterm_enums.HeatingLoop.HIGH_TEMPERATURE_LOOP"></a>
+<a id="kronoterm_enums.HeatingLoop.HEATING_LOOP_1"></a>
 
-#### HIGH\_TEMPERATURE\_LOOP
+#### HEATING\_LOOP\_1
 
 Radiators
 
-<a id="kronoterm_enums.HeatingLoop.LOW_TEMPERATURE_LOOP"></a>
+<a id="kronoterm_enums.HeatingLoop.HEATING_LOOP_2"></a>
 
-#### LOW\_TEMPERATURE\_LOOP
+#### HEATING\_LOOP\_2
 
 Convectors
 
