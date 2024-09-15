@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from kronoterm_enums import APIEndpoint, CircuitStatus, HeatingLoop, HeatingLoopMode, WorkingFunction
+from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, HeatingLoopStatus, WorkingFunction
 
 log = logging.getLogger(__name__)
 logging.basicConfig(
@@ -231,13 +231,13 @@ class KronotermCloudApi:
         set_temp = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_temp"]
         return float(set_temp)
 
-    def get_heating_loop_status(self, loop: HeatingLoop) -> CircuitStatus:
+    def get_heating_loop_status(self, loop: HeatingLoop) -> HeatingLoopStatus:
         """Get HP working status.
 
         :return: HP working status
         """
         status = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_status"]
-        return CircuitStatus(status)
+        return HeatingLoopStatus(status)
 
     def get_heating_loop_mode(self, loop: HeatingLoop) -> HeatingLoopMode:
         """Get the mode of heating loop:

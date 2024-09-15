@@ -36,7 +36,7 @@ class WorkingFunction(Enum):
     HP_FUNCTION_ACTIVE_COMPRESSOR_SECURITY = 8
 
 
-class CircuitStatus(Enum):
+class HeatingLoopStatus(Enum):
     CIRCUIT_STATUS_OFF = 0
     CIRCUIT_STATUS_NORMAL = 1
     CIRCUIT_STATUS_ECO = 2
