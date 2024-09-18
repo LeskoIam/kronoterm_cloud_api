@@ -1,8 +1,15 @@
 __version__ = "0.1.6"
 
 import requests
-from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, HeatingLoopStatus, WorkingFunction
-from util.logz import create_logger
+
+from kronoterm_cloud_api.kronoterm_enums import (
+    APIEndpoint,
+    HeatingLoop,
+    HeatingLoopMode,
+    HeatingLoopStatus,
+    WorkingFunction,
+)
+from kronoterm_cloud_api.util.logz import create_logger
 
 log = create_logger(__name__)
 
