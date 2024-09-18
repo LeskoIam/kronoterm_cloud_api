@@ -1,11 +1,10 @@
 __version__ = "0.1.5"
 
 import requests
-
 from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, HeatingLoopStatus, WorkingFunction
-from src.util.logz import create_logger
+from util.logz import create_logger
 
-log = create_logger()
+log = create_logger(__name__)
 
 
 class KronotermCloudApiException(Exception):
