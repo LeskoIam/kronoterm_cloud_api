@@ -4,7 +4,7 @@ from enum import Enum
 class HeatingLoop(Enum):
     HEATING_LOOP_1 = 1  # Radiators
     HEATING_LOOP_2 = 2  # Convectors
-    TAP_WATER = 3
+    TAP_WATER = 5
 
 
 class APIEndpoint(Enum):
