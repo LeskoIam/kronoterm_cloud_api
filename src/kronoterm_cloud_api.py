@@ -1,16 +1,11 @@
 __version__ = "0.1.4"
 
-import logging
-
 import requests
 
 from kronoterm_enums import APIEndpoint, HeatingLoop, HeatingLoopMode, HeatingLoopStatus, WorkingFunction
+from src.util.logz import create_logger
 
-log = logging.getLogger(__name__)
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)8s] [%(filename)s:%(lineno)4s:%(funcName)20s()]\t%(message)s",
-    level=logging.INFO,
-)
+log = create_logger()
 
 
 class KronotermCloudApiException(Exception):
@@ -233,6 +228,11 @@ class KronotermCloudApi:
 
     def get_heating_loop_status(self, loop: HeatingLoop) -> HeatingLoopStatus:
         """Get HP working status.
+           - ECO
+           - NORMAL
+           - COMFORT
+           - OFF
+           - AUTO
 
         :return: HP working status
         """
