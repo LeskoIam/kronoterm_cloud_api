@@ -3,6 +3,6 @@
 -r dev_requirements.txt
 
 # Build/Distribute
-build==1.2.2
+build==1.2.2.post1
 twine>=5.1.1
 pydoc-markdown>=4.8.2
