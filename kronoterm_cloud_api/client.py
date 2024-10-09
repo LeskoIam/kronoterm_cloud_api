@@ -1,5 +1,8 @@
 __version__ = "0.1.8"
 
+from collections import namedtuple
+from datetime import datetime
+
 import requests
 
 from kronoterm_cloud_api.kronoterm_enums import (
@@ -175,6 +178,27 @@ class KronotermCloudApi:
         else:
             return self.get_alarms_data().get("AlarmsData")
 
+    def get_theoretical_use_data(self) -> dict:
+        """Get theoretical use view data. As displayed in 'Theoretical use histogram'.
+
+        :return: theoretical use data
+        """
+        url = "TopPage=4&Subpage=4&Action=4"
+        url = self._base_api_url + url
+        # TODO: research dValues[]!!!
+
+        day_of_year = datetime.now().timetuple().tm_yday
+        data = {
+            "year": "2024",
+            "d1": str(day_of_year),  # day of the year
+            "d2": "0",  # hour
+            "type": "day",  # # year, month, hour, week, day, hour
+            "aValues[]": "17",  # # data to graph
+            "dValues[]": ["90", "0", "91", "92", "1", "2", "24", "71"],  # # data to graph
+        }
+        data = requests.post(url, data=data, headers=self.headers).json()
+        return data
+
     def get_outside_temperature(self) -> float:
         """Get current outside temperature.
 
@@ -304,6 +328,28 @@ class KronotermCloudApi:
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
+    def get_theoretical_power_consumption(self):
+        """Get theoretically calculated power consumption (calculated by HP and/or cloud).
+
+        :return: named tuple with latest daily power consumption in [kWh]
+        """
+        data = self.get_theoretical_use_data()
+
+        heating_consumption = data["trend_consumption"]["CompHeating"][-1]
+        cooling_consumption = data["trend_consumption"]["CompActiveCooling"][-1]
+        tap_water_consumption = data["trend_consumption"]["CompTapWater"][-1]
+        pumps_consumption = data["trend_consumption"]["CPLoops"][-1]
+        all_consumption = heating_consumption + cooling_consumption + tap_water_consumption + pumps_consumption
+
+        HPConsumption = namedtuple("HPConsumption", ["heating", "cooling", "tap_water", "pumps", "all"])
+        return HPConsumption(
+            heating=heating_consumption,
+            cooling=cooling_consumption,
+            tap_water=tap_water_consumption,
+            pumps=pumps_consumption,
+            all=all_consumption,
+        )
+
 
 if __name__ == "__main__":
     import os
@@ -328,6 +374,7 @@ if __name__ == "__main__":
         hp_api.get_initial_data(),
         hp_api.get_basic_data(),
         hp_api.get_system_review_data(),
+        hp_api.get_theoretical_power_consumption(),
         hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_1),
         hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_2),
         hp_api.get_heating_loop_data(HeatingLoop.TAP_WATER),
