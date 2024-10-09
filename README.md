@@ -44,4 +44,6 @@ print(
     hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO))  # Set the mode of heating loop.
 # >> True
 
+print(hp_api.get_theoretical_power_consumption())
+# >> HPConsumption(heating=0.7924833333333334, cooling=0, tap_water=0, pumps=0.12339583333333334, all=0.9158791666666668)
 ```
