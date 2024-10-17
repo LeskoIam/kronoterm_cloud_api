@@ -184,7 +184,6 @@ class KronotermCloudApi:
         :return: theoretical use data
         """
         url = "TopPage=4&Subpage=4&Action=4"
-        url = self._base_api_url + url
         # TODO: research dValues[]!!!
 
         day_of_year = datetime.now().timetuple().tm_yday
@@ -196,7 +195,7 @@ class KronotermCloudApi:
             "aValues[]": "17",  # # data to graph
             "dValues[]": ["90", "0", "91", "92", "1", "2", "24", "71"],  # # data to graph
         }
-        data = requests.post(url, data=data, headers=self.headers).json()
+        data = self.post_raw(url, data=data, headers=self.headers).json()
         return data
 
     def get_outside_temperature(self) -> float:
@@ -383,8 +382,8 @@ if __name__ == "__main__":
         hp_api.get_heating_loop_mode(HeatingLoop.TAP_WATER),
         hp_api.get_alarms_data(),
         "\n",
-        hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
-        hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
-        hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
+        # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
+        # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
+        # hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
     ]:
         print(api_return)
