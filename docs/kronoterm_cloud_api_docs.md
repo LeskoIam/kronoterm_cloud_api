@@ -31,9 +31,6 @@
     * [HEATING\_LOOP\_1](#kronoterm_enums.HeatingLoop.HEATING_LOOP_1)
     * [HEATING\_LOOP\_2](#kronoterm_enums.HeatingLoop.HEATING_LOOP_2)
 * [\_\_init\_\_](#__init__)
-* [util](#util)
-* [util.logz](#util.logz)
-  * [create\_logger](#util.logz.create_logger)
 
 <a id="client"></a>
 
@@ -442,22 +439,4 @@ Convectors
 <a id="__init__"></a>
 
 # \_\_init\_\_
-
-<a id="util"></a>
-
-# util
-
-<a id="util.logz"></a>
-
-# util.logz
-
-<a id="util.logz.create_logger"></a>
-
-#### create\_logger
-
-```python
-def create_logger(logger_name)
-```
-
-Create a logger for use in all cases.
 

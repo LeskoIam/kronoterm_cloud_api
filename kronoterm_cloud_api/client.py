@@ -1,5 +1,6 @@
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 
+import logging
 from collections import namedtuple
 from datetime import datetime
 
@@ -12,9 +13,8 @@ from kronoterm_cloud_api.kronoterm_enums import (
     HeatingLoopStatus,
     WorkingFunction,
 )
-from kronoterm_cloud_api.util.logz import create_logger
 
-log = create_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class KronotermCloudApiException(Exception):
