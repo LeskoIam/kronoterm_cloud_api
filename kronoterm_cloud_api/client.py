@@ -16,6 +16,10 @@ from kronoterm_cloud_api.kronoterm_enums import (
 
 log = logging.getLogger(__name__)
 
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s [%(levelname)-8s] " "%(module)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+
 
 class KronotermCloudApiException(Exception):
     pass
