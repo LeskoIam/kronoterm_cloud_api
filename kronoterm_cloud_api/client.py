@@ -191,8 +191,9 @@ class KronotermCloudApi:
         # TODO: research dValues[]!!!
 
         day_of_year = datetime.now().timetuple().tm_yday
+        year = datetime.now().timetuple().tm_year
         data = {
-            "year": "2024",
+            "year": str(year),
             "d1": str(day_of_year),  # day of the year
             "d2": "0",  # hour
             "type": "day",  # # year, month, hour, week, day, hour
@@ -368,24 +369,25 @@ if __name__ == "__main__":
     hp_api.update_heat_pump_basic_information()
 
     for api_return in [
-        hp_api.hp_id,
-        hp_api.user_level,
-        hp_api.location_name,
-        hp_api.loop_names,
-        hp_api.active_errors_count,
-        "\n",
-        hp_api.get_initial_data(),
-        hp_api.get_basic_data(),
-        hp_api.get_system_review_data(),
-        hp_api.get_theoretical_power_consumption(),
-        hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_1),
-        hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_2),
-        hp_api.get_heating_loop_data(HeatingLoop.TAP_WATER),
-        hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_1),
-        hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_2),
-        hp_api.get_heating_loop_mode(HeatingLoop.TAP_WATER),
-        hp_api.get_alarms_data(),
-        "\n",
+        hp_api.get_theoretical_power_consumption()
+        # hp_api.hp_id,
+        # hp_api.user_level,
+        # hp_api.location_name,
+        # hp_api.loop_names,
+        # hp_api.active_errors_count,
+        # "\n",
+        # hp_api.get_initial_data(),
+        # hp_api.get_basic_data(),
+        # hp_api.get_system_review_data(),
+        # hp_api.get_theoretical_power_consumption(),
+        # hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_1),
+        # hp_api.get_heating_loop_data(HeatingLoop.HEATING_LOOP_2),
+        # hp_api.get_heating_loop_data(HeatingLoop.TAP_WATER),
+        # hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_1),
+        # hp_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_2),
+        # hp_api.get_heating_loop_mode(HeatingLoop.TAP_WATER),
+        # hp_api.get_alarms_data(),
+        # "\n",
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
