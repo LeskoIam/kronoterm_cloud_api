@@ -20,6 +20,8 @@ class APIEndpoint(Enum):
     TAP_WATER_SET = "TopPage=1&Subpage=9&Action=1"
     ALARMS = "TopPage=1&Subpage=11"
 
+    ADVANCED_SETTINGS = "TopPage=3&Subpage=11&Action=1"
+
     # TIMELINE_GRAPH = "TopPage=4&Subpage=1&Action=3"
     # CONSUMPTION_HISTOGRAM = "TopPage=4&Subpage=4&Action=4"
 
@@ -48,3 +50,9 @@ class HeatingLoopMode(Enum):
     OFF = 0
     ON = 1
     AUTO = 2
+
+
+class HeatPumpMode(Enum):
+    AUTO = 0
+    ECO = 1
+    COMFORT = 2
