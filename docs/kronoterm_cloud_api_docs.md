@@ -23,6 +23,7 @@
     * [get\_heating\_loop\_target\_temperature](#client.KronotermCloudApi.get_heating_loop_target_temperature)
     * [get\_heating\_loop\_status](#client.KronotermCloudApi.get_heating_loop_status)
     * [get\_heating\_loop\_mode](#client.KronotermCloudApi.get_heating_loop_mode)
+    * [get\_heat\_pump\_operating\_mode](#client.KronotermCloudApi.get_heat_pump_operating_mode)
     * [set\_heating\_loop\_mode](#client.KronotermCloudApi.set_heating_loop_mode)
     * [set\_heat\_pump\_operating\_mode](#client.KronotermCloudApi.set_heat_pump_operating_mode)
     * [set\_heating\_loop\_target\_temperature](#client.KronotermCloudApi.set_heating_loop_target_temperature)
@@ -363,6 +364,24 @@ Get the mode of heating loop:
 **Returns**:
 
 `mode`: mode of the loop
+
+<a id="client.KronotermCloudApi.get_heat_pump_operating_mode"></a>
+
+#### get\_heat\_pump\_operating\_mode
+
+```python
+def get_heat_pump_operating_mode() -> HeatPumpMode
+```
+
+Get the mode of heating loop:
+
+- COMFORT
+   - AUTO
+   - ECO
+
+**Returns**:
+
+`mode`: mode of the heat pumo
 
 <a id="client.KronotermCloudApi.set_heating_loop_mode"></a>
 
