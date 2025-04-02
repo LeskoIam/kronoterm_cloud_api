@@ -286,6 +286,17 @@ class KronotermCloudApi:
         mode = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_mode"]
         return HeatingLoopMode(mode)
 
+    def get_heat_pump_operating_mode(self) -> HeatPumpMode:
+        """Get the mode of heating loop:
+           - COMFORT
+           - AUTO
+           - ECO
+
+        :return mode: mode of the heat pumo
+        """
+        mode = self.get_basic_data()["TemperaturesAndConfig"]["main_mode"]
+        return HeatPumpMode(mode)
+
     def set_heating_loop_mode(self, loop: HeatingLoop, mode: HeatingLoopMode) -> bool:
         """Set the mode of heating loop:
            - ON
@@ -404,6 +415,7 @@ if __name__ == "__main__":
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
-        hp_api.set_heat_pump_operating_mode(HeatPumpMode.AUTO)
+        hp_api.set_heat_pump_operating_mode(HeatPumpMode.AUTO),
+        hp_api.get_heat_pump_operating_mode()
     ]:
         print(api_return)
