@@ -11,6 +11,7 @@ from kronoterm_cloud_api.kronoterm_enums import (
     HeatingLoop,
     HeatingLoopMode,
     HeatingLoopStatus,
+    HeatPumpMode,
     WorkingFunction,
 )
 
@@ -310,6 +311,19 @@ class KronotermCloudApi:
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
+    def set_heat_pump_operating_mode(self, mode: HeatPumpMode):
+        """Set the heat pump operating mode:
+           - COMFORT
+           - AUTO
+           - ECO
+
+        :param mode: mode of the heat pump
+        """
+        request_data = {"param_name": "main_mode", "param_value": mode.value, "page": -1}
+        response = self.post_raw(APIEndpoint.ADVANCED_SETTINGS.value, data=request_data, headers=self.headers).json()
+        log.info(response)
+        return response.get("result", False) == "success"
+
     def set_heating_loop_target_temperature(self, loop: HeatingLoop, temperature: int | float) -> bool:
         """Set heating loop temperature.
 
@@ -369,7 +383,6 @@ if __name__ == "__main__":
     hp_api.update_heat_pump_basic_information()
 
     for api_return in [
-        hp_api.get_theoretical_power_consumption()
         # hp_api.hp_id,
         # hp_api.user_level,
         # hp_api.location_name,
@@ -391,5 +404,6 @@ if __name__ == "__main__":
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
+        hp_api.set_heat_pump_operating_mode(HeatPumpMode.AUTO)
     ]:
         print(api_return)
