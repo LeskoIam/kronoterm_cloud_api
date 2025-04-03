@@ -2,12 +2,16 @@ from enum import Enum
 
 
 class HeatingLoop(Enum):
+    """Heat pump heating loops"""
+
     HEATING_LOOP_1 = 1  # Radiators
     HEATING_LOOP_2 = 2  # Convectors
     TAP_WATER = 5
 
 
 class APIEndpoint(Enum):
+    """API endpoints used to get data and set heat pump parameters"""
+
     INITIAL = "Menu=1"
     BASIC = "TopPage=1&Subpage=1"
     SYSTEM_REVIEW = "TopPage=1&Subpage=2"
@@ -27,6 +31,8 @@ class APIEndpoint(Enum):
 
 
 class WorkingFunction(Enum):
+    """Heat pump working functions"""
+
     HP_FUNCTION_HEATING = 0
     HP_FUNCTION_SANITARY_WATER_HEATING = 1
     HP_FUNCTION_COOLING = 2
@@ -39,6 +45,8 @@ class WorkingFunction(Enum):
 
 
 class HeatingLoopStatus(Enum):
+    """Heat pump heating loop status dictated by heat pump operating mode and schedule"""
+
     CIRCUIT_STATUS_OFF = 0
     CIRCUIT_STATUS_NORMAL = 1
     CIRCUIT_STATUS_ECO = 2
@@ -47,12 +55,16 @@ class HeatingLoopStatus(Enum):
 
 
 class HeatingLoopMode(Enum):
+    """Heat pump heating loop mode"""
+
     OFF = 0
     ON = 1
     AUTO = 2
 
 
 class HeatPumpOperatingMode(Enum):
+    """Heat pump operating mode"""
+
     AUTO = 0
     ECO = 1
     COMFORT = 2
