@@ -9,7 +9,7 @@ readme = "README.md"
 description = "API for Kronoterm heat pumps cloud"
 authors = [{name = "Matevž", email = "matevzlesko@gmail.com"},]
 
-license = {file = "LICENSE"}
+license = "GPL-3.0-or-later"
 
 requires-python = ">=3.8"
 dependencies = [
