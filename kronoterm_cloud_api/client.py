@@ -11,7 +11,7 @@ from kronoterm_cloud_api.kronoterm_enums import (
     HeatingLoop,
     HeatingLoopMode,
     HeatingLoopStatus,
-    HeatPumpMode,
+    HeatPumpOperatingMode,
     WorkingFunction,
 )
 
@@ -286,7 +286,7 @@ class KronotermCloudApi:
         mode = self.get_heating_loop_data(loop)["HeatingCircleData"]["circle_mode"]
         return HeatingLoopMode(mode)
 
-    def get_heat_pump_operating_mode(self) -> HeatPumpMode:
+    def get_heat_pump_operating_mode(self) -> HeatPumpOperatingMode:
         """Get the mode of heating loop:
            - COMFORT
            - AUTO
@@ -295,7 +295,7 @@ class KronotermCloudApi:
         :return mode: mode of the heat pumo
         """
         mode = self.get_basic_data()["TemperaturesAndConfig"]["main_mode"]
-        return HeatPumpMode(mode)
+        return HeatPumpOperatingMode(mode)
 
     def set_heating_loop_mode(self, loop: HeatingLoop, mode: HeatingLoopMode) -> bool:
         """Set the mode of heating loop:
@@ -322,7 +322,7 @@ class KronotermCloudApi:
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
-    def set_heat_pump_operating_mode(self, mode: HeatPumpMode):
+    def set_heat_pump_operating_mode(self, mode: HeatPumpOperatingMode):
         """Set the heat pump operating mode:
            - COMFORT
            - AUTO
@@ -415,7 +415,11 @@ if __name__ == "__main__":
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_1, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.HEATING_LOOP_2, HeatingLoopMode.AUTO),
         # hp_api.set_heating_loop_mode(HeatingLoop.TAP_WATER, HeatingLoopMode.AUTO),
-        hp_api.set_heat_pump_operating_mode(HeatPumpMode.AUTO),
+        hp_api.set_heat_pump_operating_mode(HeatPumpOperatingMode.AUTO),
         hp_api.get_heat_pump_operating_mode(),
     ]:
         print(api_return)
+
+    system_review_data = hp_api.get_system_review_data()
+    heat_pump_operating_mode = HeatPumpOperatingMode(system_review_data["TemperaturesAndConfig"]["main_mode"])
+    print(heat_pump_operating_mode)

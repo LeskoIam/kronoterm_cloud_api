@@ -52,7 +52,7 @@ class HeatingLoopMode(Enum):
     AUTO = 2
 
 
-class HeatPumpMode(Enum):
+class HeatPumpOperatingMode(Enum):
     AUTO = 0
     ECO = 1
     COMFORT = 2
