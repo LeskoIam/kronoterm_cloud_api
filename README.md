@@ -20,7 +20,7 @@ API documentation available [here](./docs/kronoterm_cloud_api_docs.md).
 ## Examples
 
 ```python
-from kronoterm_cloud_api import KronotermCloudApi
+from kronoterm_cloud_api.client import KronotermCloudApi
 from kronoterm_enums import HeatingLoop, HeatingLoopMode
 
 hp_api = KronotermCloudApi("your-kronoterm-cloud-username", "your-kronoterm-cloud-password")
