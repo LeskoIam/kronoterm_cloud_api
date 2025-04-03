@@ -32,6 +32,11 @@
   * [HeatingLoop](#kronoterm_enums.HeatingLoop)
     * [HEATING\_LOOP\_1](#kronoterm_enums.HeatingLoop.HEATING_LOOP_1)
     * [HEATING\_LOOP\_2](#kronoterm_enums.HeatingLoop.HEATING_LOOP_2)
+  * [APIEndpoint](#kronoterm_enums.APIEndpoint)
+  * [WorkingFunction](#kronoterm_enums.WorkingFunction)
+  * [HeatingLoopStatus](#kronoterm_enums.HeatingLoopStatus)
+  * [HeatingLoopMode](#kronoterm_enums.HeatingLoopMode)
+  * [HeatPumpOperatingMode](#kronoterm_enums.HeatPumpOperatingMode)
 * [\_\_init\_\_](#__init__)
 
 <a id="client"></a>
@@ -370,7 +375,7 @@ Get the mode of heating loop:
 #### get\_heat\_pump\_operating\_mode
 
 ```python
-def get_heat_pump_operating_mode() -> HeatPumpMode
+def get_heat_pump_operating_mode() -> HeatPumpOperatingMode
 ```
 
 Get the mode of heating loop:
@@ -407,7 +412,7 @@ Set the mode of heating loop:
 #### set\_heat\_pump\_operating\_mode
 
 ```python
-def set_heat_pump_operating_mode(mode: HeatPumpMode)
+def set_heat_pump_operating_mode(mode: HeatPumpOperatingMode)
 ```
 
 Set the heat pump operating mode:
@@ -462,6 +467,8 @@ named tuple with latest daily power consumption in [kWh]
 class HeatingLoop(Enum)
 ```
 
+Heat pump heating loops
+
 <a id="kronoterm_enums.HeatingLoop.HEATING_LOOP_1"></a>
 
 #### HEATING\_LOOP\_1
@@ -473,6 +480,56 @@ Radiators
 #### HEATING\_LOOP\_2
 
 Convectors
+
+<a id="kronoterm_enums.APIEndpoint"></a>
+
+## APIEndpoint Objects
+
+```python
+class APIEndpoint(Enum)
+```
+
+API endpoints used to get data and set heat pump parameters
+
+<a id="kronoterm_enums.WorkingFunction"></a>
+
+## WorkingFunction Objects
+
+```python
+class WorkingFunction(Enum)
+```
+
+Heat pump working functions
+
+<a id="kronoterm_enums.HeatingLoopStatus"></a>
+
+## HeatingLoopStatus Objects
+
+```python
+class HeatingLoopStatus(Enum)
+```
+
+Heat pump heating loop status dictated by heat pump operating mode and schedule
+
+<a id="kronoterm_enums.HeatingLoopMode"></a>
+
+## HeatingLoopMode Objects
+
+```python
+class HeatingLoopMode(Enum)
+```
+
+Heat pump heating loop mode
+
+<a id="kronoterm_enums.HeatPumpOperatingMode"></a>
+
+## HeatPumpOperatingMode Objects
+
+```python
+class HeatPumpOperatingMode(Enum)
+```
+
+Heat pump operating mode
 
 <a id="__init__"></a>
 
