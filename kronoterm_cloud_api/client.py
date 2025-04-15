@@ -3,6 +3,7 @@ __version__ = "0.1.16"
 import logging
 from collections import namedtuple
 from datetime import datetime
+from typing import Any
 
 import requests
 
@@ -56,8 +57,8 @@ class KronotermCloudApi:
 
         self._base_api_url = "https://cloud.kronoterm.com/jsoncgi.php?"
         self._login_url = "https://cloud.kronoterm.com/?login=1"
-        self.headers = None
-        self.session_id = None
+        self.headers: dict[str, str] | None = None
+        self.session_id: str | None = None
 
         # Heat pump information
         self.hp_id: str | None = None
@@ -66,7 +67,7 @@ class KronotermCloudApi:
         self.loop_names: str | None = None  # CircleNames
         self.active_errors_count: str | None = None
 
-    def login(self):
+    def login(self) -> None:
         """Log in to cloud."""
 
         login_data = {"username": self.username, "password": self.password}
@@ -109,7 +110,7 @@ class KronotermCloudApi:
             raise KronotermCloudApiException(f"GET failed, API returned result='{result}'")
         return response
 
-    def get_raw(self, url: str, **kwargs):
+    def get_raw(self, url: str, **kwargs) -> requests.Response:
         """GET response from given url API endpoint.
 
         :param url: url of the request
@@ -122,7 +123,7 @@ class KronotermCloudApi:
         log.info("GET RESP: '%s'", response.text)
         return response
 
-    def post_raw(self, url, **kwargs):
+    def post_raw(self, url: str, **kwargs) -> requests.Response:
         """POST response from given url API endpoint.
 
         :param url: url of the request
@@ -140,7 +141,7 @@ class KronotermCloudApi:
         log.info("POST RESP: '%s'", response.text)
         return response
 
-    def update_heat_pump_basic_information(self):
+    def update_heat_pump_basic_information(self) -> None:
         """Update heat pump information from INITIAL load data."""
 
         data = self.get_initial_data()
@@ -150,7 +151,7 @@ class KronotermCloudApi:
         self.loop_names = data.get("CircleNames")
         self.active_errors_count = int(data.get("ActiveErrorsCnt"))
 
-    def get_initial_data(self) -> dict:
+    def get_initial_data(self) -> dict[str, Any]:
         """Get initial data.
 
         :return: initial data
@@ -158,7 +159,7 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.INITIAL.value).json()
         return data
 
-    def get_basic_data(self) -> dict:
+    def get_basic_data(self) -> dict[str, Any]:
         """Get basic view data.
 
         :return: basic view data
@@ -166,7 +167,7 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.BASIC.value).json()
         return data
 
-    def get_system_review_data(self) -> dict:
+    def get_system_review_data(self) -> dict[str, Any]:
         """Get system review view data.
 
         :return: system review data
@@ -174,7 +175,7 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.SYSTEM_REVIEW.value).json()
         return data
 
-    def get_heating_loop_data(self, loop: HeatingLoop) -> dict:
+    def get_heating_loop_data(self, loop: HeatingLoop) -> dict[str, Any]:
         """Get heating loop view data. Supports:
         - HEATING_LOOP_1
         - HEATING_LOOP_2
@@ -194,7 +195,7 @@ class KronotermCloudApi:
         data = self.get_raw(loop_url).json()
         return data
 
-    def get_alarms_data(self) -> dict:
+    def get_alarms_data(self) -> dict[str, Any]:
         """Get alarm view data.
 
         :return: alarm data
@@ -202,7 +203,7 @@ class KronotermCloudApi:
         data = self.get_raw(APIEndpoint.ALARMS.value).json()
         return data
 
-    def get_alarms_data_only(self, alarms_data: dict | None = None) -> dict:
+    def get_alarms_data_only(self, alarms_data: dict[str, Any] | None = None) -> dict[str, Any]:
         """Get only AlarmsData (list of alarms) part of the alarm response.
 
         :param alarms_data: if supplied it will be parsed for AlarmsData otherwise make API request
@@ -213,7 +214,7 @@ class KronotermCloudApi:
         else:
             return self.get_alarms_data().get("AlarmsData")
 
-    def get_theoretical_use_data(self) -> dict:
+    def get_theoretical_use_data(self) -> dict[str, Any]:
         """Get theoretical use view data. As displayed in 'Theoretical use histogram'.
 
         :return: theoretical use data
@@ -322,7 +323,7 @@ class KronotermCloudApi:
            - AUTO
            - ECO
 
-        :return mode: mode of the heat pumo
+        :return mode: mode of the heat pump
         """
         mode = self.get_basic_data()["TemperaturesAndConfig"]["main_mode"]
         return HeatPumpOperatingMode(mode)
@@ -352,7 +353,7 @@ class KronotermCloudApi:
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
-    def set_heat_pump_operating_mode(self, mode: HeatPumpOperatingMode):
+    def set_heat_pump_operating_mode(self, mode: HeatPumpOperatingMode) -> bool:
         """Set the heat pump operating mode:
            - COMFORT
            - AUTO
@@ -387,7 +388,7 @@ class KronotermCloudApi:
         response = self.post_raw(loop_url, data=request_data, headers=self.headers).json()
         return response.get("result", False) == "success"
 
-    def get_theoretical_power_consumption(self):
+    def get_theoretical_power_consumption(self) -> namedtuple:
         """Get theoretically calculated power consumption (calculated by HP and/or cloud).
 
         :return: named tuple with latest daily power consumption in [kWh]
