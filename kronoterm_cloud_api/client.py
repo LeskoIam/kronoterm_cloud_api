@@ -43,6 +43,8 @@ class KronotermCloudApi:
         "Cookie": "",
     }
 
+    ERROR_RESULT = ("action",)
+
     def __init__(self, username: str, password: str):
         """Kronoterm heat pump cloud API.
 
@@ -79,6 +81,34 @@ class KronotermCloudApi:
         self.headers["Cookie"] = f"PHPSESSID={self.session_id}"
         log.info("Logged in and session cookie set.")
 
+    def _request_with_retries(self, request_type: str, url: str, **kwargs) -> requests.Response:
+        """
+        Perform a GET request to the given URL with retries in case of errors.
+
+        If the API returns an error result, the method will attempt to re-login and update
+        heat pump information before retrying the request.
+
+        :param request_type: The type of request to perform (GET, POST, ...).
+        :param url: The URL to send the GET request to.
+        :param kwargs: Additional arguments to pass to the `requests.get` method.
+        :return: The response object from the successful GET request.
+        :raises KronotermCloudApiException: If the request fails after retries.
+        """
+        result: str | None = None
+        for _ in range(2):
+            response = getattr(requests, request_type.lower())(url, headers=self.headers, **kwargs)
+            result = response.json().get("result")
+            if result in self.ERROR_RESULT:
+                log.warning("GET failed, API returned result='%s'. Trying to login again ...", result)
+                self.login()
+                self.update_heat_pump_basic_information()
+            else:
+                break
+        else:
+            log.error("GET failed, API returned result='%s'", result)
+            raise KronotermCloudApiException(f"GET failed, API returned result='{result}'")
+        return response
+
     def get_raw(self, url: str, **kwargs):
         """GET response from given url API endpoint.
 
@@ -88,7 +118,7 @@ class KronotermCloudApi:
         """
         url = self._base_api_url + url
         log.info("GET: '%s' [headers='%s', kwargs='%s']", url, self.headers, kwargs)
-        response = requests.get(url, headers=self.headers, **kwargs)
+        response = self._request_with_retries("GET", url=url, **kwargs)
         log.info("GET RESP: '%s'", response.text)
         return response
 
@@ -106,7 +136,7 @@ class KronotermCloudApi:
             headers = self.headers
         url = self._base_api_url + url
         log.info("POST: '%s' [headers='%s', kwargs='%s']", url, headers, kwargs)
-        response = requests.post(url, headers=headers, **kwargs)
+        response = self._request_with_retries("post", url, **kwargs)
         log.info("POST RESP: '%s'", response.text)
         return response
 
