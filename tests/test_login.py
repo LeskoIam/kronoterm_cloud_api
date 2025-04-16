@@ -1,6 +1,6 @@
 import pytest
 
-from kronoterm_cloud_api import KronotermCloudApi, KronotermCloudApiException
+from kronoterm_cloud_api.client import KronotermCloudApi, KronotermCloudApiException
 
 
 def test_login_success(kronoterm_user):
@@ -23,5 +23,5 @@ def test_login_failed(kronoterm_user):
     THEN log-in must fail with KronotermCloudApiException exception
     """
     kronoterm_cloud_api = KronotermCloudApi(username="TestUserNonExisting", password=kronoterm_user["password"])
-    with pytest.raises(KronotermCloudApiException):
+    with pytest.raises(KronotermCloudApiException, match="Login failed"):
         kronoterm_cloud_api.login()

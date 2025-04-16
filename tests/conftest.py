@@ -3,7 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from kronoterm_cloud_api import KronotermCloudApi
+from kronoterm_cloud_api.client import KronotermCloudApi
 
 load_dotenv()
 
@@ -19,8 +19,10 @@ def kronoterm_user() -> dict:
 
 @pytest.fixture(scope="module")
 def kronoterm_cloud_api(kronoterm_user) -> KronotermCloudApi:
-    """Get KronotermCloudApi object. User NOT logged in!
+    """Get KronotermCloudApi object with user logged in!
 
     :return: KronotermCloudApi
     """
-    return KronotermCloudApi(username=kronoterm_user["username"], password=kronoterm_user["password"])
+    kca = KronotermCloudApi(username=kronoterm_user["username"], password=kronoterm_user["password"])
+    kca.login()
+    return kca
