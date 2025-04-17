@@ -82,7 +82,7 @@ class KronotermCloudApi:
         self.headers["Cookie"] = f"PHPSESSID={self.session_id}"
         log.info("Logged in and session cookie set.")
 
-    def _request_with_retries(self, request_type: str, url: str, **kwargs) -> requests.Response:
+    def _request_with_retrie(self, request_type: str, url: str, **kwargs) -> requests.Response:
         """
         Perform a GET request to the given URL with retries in case of errors.
 
@@ -119,7 +119,7 @@ class KronotermCloudApi:
         """
         url = self._base_api_url + url
         log.info("GET: '%s' [headers='%s', kwargs='%s']", url, self.headers, kwargs)
-        response = self._request_with_retries("GET", url=url, **kwargs)
+        response = self._request_with_retrie("GET", url=url, **kwargs)
         log.info("GET RESP: '%s'", response.text)
         return response
 
@@ -137,7 +137,7 @@ class KronotermCloudApi:
             headers = self.headers
         url = self._base_api_url + url
         log.info("POST: '%s' [headers='%s', kwargs='%s']", url, headers, kwargs)
-        response = self._request_with_retries("post", url, **kwargs)
+        response = self._request_with_retrie("post", url, **kwargs)
         log.info("POST RESP: '%s'", response.text)
         return response
 

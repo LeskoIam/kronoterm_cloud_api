@@ -3,6 +3,7 @@ import pytest
 from kronoterm_cloud_api.client import KronotermCloudApi, KronotermCloudApiException
 
 
+@pytest.mark.live
 def test_login_success(kronoterm_user):
     """
     GIVEN user with valid credentials
@@ -16,6 +17,7 @@ def test_login_success(kronoterm_user):
         pytest.fail(e)
 
 
+@pytest.mark.live
 def test_login_failed(kronoterm_user):
     """
     GIVEN user with invalid credentials

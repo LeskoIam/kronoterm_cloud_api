@@ -2,15 +2,19 @@ import logging
 import time
 
 import pytest
-from kronoterm_enums import HeatingLoop, HeatingLoopMode, HeatPumpOperatingMode
 
 from kronoterm_cloud_api.client import KronotermCloudApiException
+from kronoterm_cloud_api.kronoterm_enums import HeatingLoop, HeatingLoopMode, HeatPumpOperatingMode
 
 log = logging.getLogger(__name__)
 
 
+############
+# Fixtures #
+############
 @pytest.fixture(scope="function")
-def restore_target_temperature(heating_loop, kronoterm_cloud_api):
+def restore_target_temperature(heating_loop: HeatingLoop, kronoterm_cloud_api):
+    """Gets and restores originally set target temperature for heating loop after test."""
     # Get the current temperature
     original_temperature = kronoterm_cloud_api.get_heating_loop_target_temperature(heating_loop)
     log.info("Original temperature for loop %s: %s", heating_loop, original_temperature)
@@ -23,6 +27,7 @@ def restore_target_temperature(heating_loop, kronoterm_cloud_api):
 
 @pytest.fixture(scope="function")
 def restore_loop_mode(heating_loop: HeatingLoop, kronoterm_cloud_api):
+    """Gets and restores originally set heating loop mode after test."""
     # Get the current loop mode
     original_mode = kronoterm_cloud_api.get_heating_loop_mode(heating_loop)
     log.info("Original mode for loop %s: %s", heating_loop.name, original_mode.name)
@@ -35,6 +40,7 @@ def restore_loop_mode(heating_loop: HeatingLoop, kronoterm_cloud_api):
 
 @pytest.fixture(scope="function")
 def restore_operating_mode(kronoterm_cloud_api):
+    """Gets and restores originally set heat pump operating mode after test."""
     # Get the current loop operating mode
     original_operating_mode = kronoterm_cloud_api.get_heat_pump_operating_mode()
     log.info("Original operating mode: %s", original_operating_mode.name)
@@ -45,6 +51,10 @@ def restore_operating_mode(kronoterm_cloud_api):
     time.sleep(5)
 
 
+#########
+# Tests #
+#########
+@pytest.mark.live
 @pytest.mark.parametrize(
     "heating_loop",
     [HeatingLoop.HEATING_LOOP_1, HeatingLoop.HEATING_LOOP_2, HeatingLoop.TAP_WATER],
@@ -68,6 +78,7 @@ def test_set_loop_target_temperature(heating_loop, kronoterm_cloud_api, restore_
     assert kronoterm_cloud_api.get_heating_loop_target_temperature(heating_loop) == original_temperature - 0.3
 
 
+@pytest.mark.live
 @pytest.mark.parametrize(
     "heating_loop",
     [HeatingLoop.HEATING_LOOP_1, HeatingLoop.HEATING_LOOP_2, HeatingLoop.TAP_WATER],
@@ -97,6 +108,7 @@ def test_set_loop_mode(kronoterm_cloud_api, heating_loop, loop_mode, restore_loo
     assert kronoterm_cloud_api.get_heating_loop_mode(HeatingLoop.HEATING_LOOP_1) == loop_mode
 
 
+@pytest.mark.live
 @pytest.mark.parametrize(
     "operating_mode",
     [HeatPumpOperatingMode.COMFORT, HeatPumpOperatingMode.ECO, HeatPumpOperatingMode.AUTO],
