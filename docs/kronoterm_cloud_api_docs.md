@@ -71,7 +71,7 @@ Kronoterm heat pump cloud API.
 #### login
 
 ```python
-def login()
+def login() -> None
 ```
 
 Log in to cloud.
@@ -81,7 +81,7 @@ Log in to cloud.
 #### get\_raw
 
 ```python
-def get_raw(url: str, **kwargs)
+def get_raw(url: str, **kwargs) -> requests.Response
 ```
 
 GET response from given url API endpoint.
@@ -100,7 +100,7 @@ response
 #### post\_raw
 
 ```python
-def post_raw(url, **kwargs)
+def post_raw(url: str, **kwargs) -> requests.Response
 ```
 
 POST response from given url API endpoint.
@@ -119,7 +119,7 @@ response
 #### update\_heat\_pump\_basic\_information
 
 ```python
-def update_heat_pump_basic_information()
+def update_heat_pump_basic_information() -> None
 ```
 
 Update heat pump information from INITIAL load data.
@@ -129,7 +129,7 @@ Update heat pump information from INITIAL load data.
 #### get\_initial\_data
 
 ```python
-def get_initial_data() -> dict
+def get_initial_data() -> dict[str, Any]
 ```
 
 Get initial data.
@@ -143,7 +143,7 @@ initial data
 #### get\_basic\_data
 
 ```python
-def get_basic_data() -> dict
+def get_basic_data() -> dict[str, Any]
 ```
 
 Get basic view data.
@@ -157,7 +157,7 @@ basic view data
 #### get\_system\_review\_data
 
 ```python
-def get_system_review_data() -> dict
+def get_system_review_data() -> dict[str, Any]
 ```
 
 Get system review view data.
@@ -171,7 +171,7 @@ system review data
 #### get\_heating\_loop\_data
 
 ```python
-def get_heating_loop_data(loop: HeatingLoop) -> dict
+def get_heating_loop_data(loop: HeatingLoop) -> dict[str, Any]
 ```
 
 Get heating loop view data. Supports:
@@ -189,7 +189,7 @@ heating loop data
 #### get\_alarms\_data
 
 ```python
-def get_alarms_data() -> dict
+def get_alarms_data() -> dict[str, Any]
 ```
 
 Get alarm view data.
@@ -203,7 +203,8 @@ alarm data
 #### get\_alarms\_data\_only
 
 ```python
-def get_alarms_data_only(alarms_data: dict | None = None) -> dict
+def get_alarms_data_only(
+        alarms_data: dict[str, Any] | None = None) -> dict[str, Any]
 ```
 
 Get only AlarmsData (list of alarms) part of the alarm response.
@@ -221,7 +222,7 @@ list of alarms
 #### get\_theoretical\_use\_data
 
 ```python
-def get_theoretical_use_data() -> dict
+def get_theoretical_use_data() -> dict[str, Any]
 ```
 
 Get theoretical use view data. As displayed in 'Theoretical use histogram'.
@@ -386,7 +387,7 @@ Get the mode of heating loop:
 
 **Returns**:
 
-`mode`: mode of the heat pumo
+`mode`: mode of the heat pump
 
 <a id="client.KronotermCloudApi.set_heating_loop_mode"></a>
 
@@ -412,7 +413,7 @@ Set the mode of heating loop:
 #### set\_heat\_pump\_operating\_mode
 
 ```python
-def set_heat_pump_operating_mode(mode: HeatPumpOperatingMode)
+def set_heat_pump_operating_mode(mode: HeatPumpOperatingMode) -> bool
 ```
 
 Set the heat pump operating mode:
@@ -446,7 +447,7 @@ Set heating loop temperature.
 #### get\_theoretical\_power\_consumption
 
 ```python
-def get_theoretical_power_consumption()
+def get_theoretical_power_consumption() -> namedtuple
 ```
 
 Get theoretically calculated power consumption (calculated by HP and/or cloud).
@@ -464,7 +465,7 @@ named tuple with latest daily power consumption in [kWh]
 ## HeatingLoop Objects
 
 ```python
-class HeatingLoop(Enum)
+class HeatingLoop(IntEnum)
 ```
 
 Heat pump heating loops
@@ -486,7 +487,7 @@ Convectors
 ## APIEndpoint Objects
 
 ```python
-class APIEndpoint(Enum)
+class APIEndpoint(StrEnum)
 ```
 
 API endpoints used to get data and set heat pump parameters
@@ -496,7 +497,7 @@ API endpoints used to get data and set heat pump parameters
 ## WorkingFunction Objects
 
 ```python
-class WorkingFunction(Enum)
+class WorkingFunction(IntEnum)
 ```
 
 Heat pump working functions
@@ -506,7 +507,7 @@ Heat pump working functions
 ## HeatingLoopStatus Objects
 
 ```python
-class HeatingLoopStatus(Enum)
+class HeatingLoopStatus(IntEnum)
 ```
 
 Heat pump heating loop status dictated by heat pump operating mode and schedule
@@ -516,7 +517,7 @@ Heat pump heating loop status dictated by heat pump operating mode and schedule
 ## HeatingLoopMode Objects
 
 ```python
-class HeatingLoopMode(Enum)
+class HeatingLoopMode(IntEnum)
 ```
 
 Heat pump heating loop mode
@@ -526,7 +527,7 @@ Heat pump heating loop mode
 ## HeatPumpOperatingMode Objects
 
 ```python
-class HeatPumpOperatingMode(Enum)
+class HeatPumpOperatingMode(IntEnum)
 ```
 
 Heat pump operating mode
