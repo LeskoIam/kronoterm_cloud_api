@@ -81,6 +81,7 @@ class KronotermCloudApi:
         self.session_id = login_response.cookies["PHPSESSID"]
         self.headers["Cookie"] = f"PHPSESSID={self.session_id}"
         log.info("Logged in and session cookie set.")
+        self.update_heat_pump_basic_information()
 
     def _request_with_retrie(self, request_type: str, url: str, **kwargs) -> requests.Response:
         """
