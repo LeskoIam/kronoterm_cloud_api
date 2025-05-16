@@ -4,7 +4,7 @@ from kronoterm_cloud_api.client import KronotermCloudApi, KronotermCloudApiExcep
 
 
 @pytest.mark.live
-def test_login_success(kronoterm_user):
+def test_login_success(kronoterm_user: dict):
     """
     GIVEN user with valid credentials
     WHEN user tries to log-in
@@ -18,7 +18,7 @@ def test_login_success(kronoterm_user):
 
 
 @pytest.mark.live
-def test_login_failed(kronoterm_user):
+def test_login_failed(kronoterm_user: dict):
     """
     GIVEN user with invalid credentials
     WHEN user tries to log-in
