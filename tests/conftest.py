@@ -18,7 +18,7 @@ def kronoterm_user() -> dict:
 
 
 @pytest.fixture(scope="module")
-def kronoterm_cloud_api(kronoterm_user) -> KronotermCloudApi:
+def kronoterm_cloud_api(kronoterm_user: dict) -> KronotermCloudApi:
     """Get KronotermCloudApi object with user logged in!
 
     :return: KronotermCloudApi
