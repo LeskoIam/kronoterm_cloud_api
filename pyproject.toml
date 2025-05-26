@@ -14,7 +14,7 @@ license = "GPL-3.0-or-later"
 requires-python = ">=3.8"
 dependencies = [
     "requests>=2.32.3",
-    "python-dotenv>=1.0.1"
+    "python-dotenv>=1.0.1",
 ]
 
 classifiers = [
@@ -27,6 +27,12 @@ classifiers = [
 Homepage = "https://github.com/LeskoIam/kronoterm_cloud_api"
 Issues = "https://github.com/LeskoIam/kronoterm_cloud_api/issues"
 
+[tool.uv]
+dev-dependencies = [
+    "bumpver>=2024.1130",
+    "pydoc-markdown>=4.8.2",
+    "pytest>=8.3.5",
+]
 
 [tool.bumpver]
 current_version = "0.1.17"

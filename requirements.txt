@@ -1,8 +1,0 @@
-# Base (production)
-# Development
--r dev_requirements.txt
-
-# Build/Distribute
-build==1.2.2
-twine>=5.1.1
-pydoc-markdown>=4.8.2

@@ -7,11 +7,15 @@ API client for controlling Kronoterm heat pumps via their cloud (cloud.kronoterm
 
 ## Installation
 
-1. Install using `pip`
+1. Install using `uv`
+    ```shell
+    uv add kronoterm-cloud-api
+    ```
+2. Install using `pip`
    ```shell
    python -m pip install kronoterm_cloud_api
    ```
-2. Enjoy!
+3. Enjoy!
 
 
 ## Documentation
