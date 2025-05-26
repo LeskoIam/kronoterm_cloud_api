@@ -1,6 +1,6 @@
 rm dist/*
 
-python -m pip install -r requirements.txt
+uv sync
 
 pydoc-markdown -I kronoterm_cloud_api --render-toc > docs\kronoterm_cloud_api_docs.md
 git add docs\kronoterm_cloud_api_docs.md
