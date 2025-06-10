@@ -1,0 +1,34 @@
+name: tests
+on: [ pull_request, workflow_dispatch ]
+jobs:
+  test:
+    name: python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          # Install a specific version of uv.
+          version: "0.7.12"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Test with pytest
+        env:
+          KRONOTERM_CLOUD_USER: ${{ secrets.KRONOTERM_CLOUD_USER }}
+          KRONOTERM_CLOUD_PASSWORD: ${{ secrets.KRONOTERM_CLOUD_PASSWORD }}
+        # working-directory: ./app
+        run: uv run pytest ./tests/test_login.py --html=report.html --self-contained-html -vv --log-cli-level DEBUG
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            ./report.html
+          retention-days: 5
